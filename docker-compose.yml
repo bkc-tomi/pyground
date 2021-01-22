@@ -11,7 +11,7 @@ services:
         - POSTGRES_USER=testuser
         - POSTGRES_PASSWORD=test
         - PGPASSWORD=test
-        - POSTGRES_DB=django
+        - POSTGRES_DB=pyground_db
         - DATABASE_HOST=localhost
     volumes:
         - ./db/pgdata:/var/lib/postgresql/data
@@ -20,7 +20,7 @@ services:
   web:
     build: ./web
     container_name: pyground_web
-    command: python3 manage.py runserver 0.0.0.0:8000
+    # command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./web:/code
     tty: true
