@@ -19,14 +19,14 @@
 ||フレンド|フォロー許可ページ| /friend/<int: user_id>/follow/permit/ | permit | /follow/permit.html |フォロー申請の認証(プライベートアカウント)||
 ||フレンド|フォロー許可処理| /friend/<int: user_id>/follow/run/permit/ | run_permit ||フォロー申請の許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
 ||フレンド|フォロー不許可処理| /friend/<int: user_id>/follow/run/nopermit/ | run_nopermit ||フォロー申請の不許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
-||問題|問題一覧ページ| /question/list/ | question | /question/index.html |問題一覧の表示(全て)<br>ブックマークフォーム送信||
+||問題|問題一覧ページ| /question/list/ | questions | /question/index.html |問題一覧の表示(全て)<br>ブックマークフォーム送信||
 ||問題|問題管理ページ| /question/<int: user_id>/manage/ | manage | /question/manage.html |問題一覧の表示(自作)||
-||問題|ブックマーク処理| /question/list?user_id=&question_id= | bookmark ||ブックマーク処理|問題一覧ページからPOSTで取得|
 ||問題|問題詳細ページ| /question/<int: question_id>/detail/ | detail | /question/detail.html |問題詳細の表示(問題の情報、解いた人一覧)||
-||問題|問題編集・新規作成ページ| /question/edit/ | edit | /question/edit.html |問題の作成・既存の問題の編集内容を入力<br>フォーム送信||
-||問題|問題編集・新規作成処理| /question/run/edit?question_id= | run_edit |  |問題の作成・既存の問題の編集処理|問題編集・新規作成ページからPOSTで取得|
+||問題|問題編集・新規作成ページ| /question/<int: question_id>/edit/ | edit | /question/edit.html |問題の作成・既存の問題の編集内容を入力<br>フォーム送信||
+||問題|問題編集・新規作成処理| /question/<int: question_id>/run/edit?question_id= | run_edit |  |問題の作成・既存の問題の編集処理|問題編集・新規作成ページからPOSTで取得|
 ||ブックマーク|ブックマーク一覧ページ| /bookmark/<int: user_id>/list/ | index | /bookmark/index.html |問題一覧の表示(自分作成・ブックマーク)||
-||ブックマーク|ブックマーク解除処理| /bookmark/<int: user_id>/list/ | release |  |問題一覧の表示(自分作成・ブックマーク)||
+||ブックマーク|ブックマーク処理| /bookmark/<int: question_id>/run | run_bookmark ||ブックマーク処理|問題一覧ページからPOSTで取得|
+||ブックマーク|ブックマーク解除処理| /bookmark/<int: question_id>/release/ | release |  |問題一覧の表示(自分作成・ブックマーク)||
 ||プレイグランド|入力ページ| /playground/<int: code_id> | index | /playground/index.html |コード入力<br>実行フォーム送信<br>保存フォーム送信||
 ||プレイグランド|実行処理| /playground/<int: code_id>/run/ | run ||コードの実行<br>問題との答え合わせ<br>正解者登録|入力ページからPOSTで取得|
 ||プレイグランド|問題ページ| /playground/<int: question_id>/<int: code_id> | question | /playground/question.html |コード入力<br>問題フォーム送信<br>保存フォーム送信<br>問題フォーム送信||

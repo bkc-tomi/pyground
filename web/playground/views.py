@@ -3,11 +3,11 @@ from django.http import HttpResponse
 
 """
 ----------------------------------------------------------------------
-プレイグランド／入力ページ
+プレイグランド／プレイグランド
 ----------------------------------------------------------------------
 """
 def index(request):
-    return HttpResponse("playground page")
+    return HttpResponse("playground")
 
 """
 ----------------------------------------------------------------------
@@ -15,28 +15,44 @@ def index(request):
 ----------------------------------------------------------------------
 """
 def run(request):
-    return HttpResponse("run page")
+    return HttpResponse("run code")
+
+"""
+----------------------------------------------------------------------
+プレイグランド／コード編集
+----------------------------------------------------------------------
+"""
+def index_edit(request, code_id):
+    return HttpResponse("playground code_id:" + str(code_id))
+
+"""
+----------------------------------------------------------------------
+プレイグランド／実行処理
+----------------------------------------------------------------------
+"""
+def run_code(request, code_id):
+    return HttpResponse("run code_id:" + str(code_id))
 
 """
 ----------------------------------------------------------------------
 プレイグランド／問題ページ
 ----------------------------------------------------------------------
 """
-def question(request):
-    return HttpResponse("playground question page")
+def question(request, question_id):
+    return HttpResponse("question:" + str(question_id) + " playground")
 
 """
 ----------------------------------------------------------------------
 プレイグランド／問題処理
 ----------------------------------------------------------------------
 """
-def run_question(request):
-    return HttpResponse("run_question page")
+def run_question(request, question_id):
+    return HttpResponse("run_question" + str(question_id))
 
 """
 ----------------------------------------------------------------------
 プレイグランド／保存処理
 ----------------------------------------------------------------------
 """
-def save(request):
-    return HttpResponse("save page")
+def save(request, code_id):
+    return HttpResponse("save code_id:" + str(code_id))

@@ -14,37 +14,45 @@ def questions(request):
 問題／管理ページ
 ----------------------------------------------------------------------
 """
-def manage(request):
-    return HttpResponse("manage page")
-
-"""
-----------------------------------------------------------------------
-問題／ブックマーク処理
-----------------------------------------------------------------------
-"""
-def bookmark(request):
-    return HttpResponse("bookmark page")
+def manage(request, user_id):
+    return HttpResponse(str(user_id) + "'s question list.")
 
 """
 ----------------------------------------------------------------------
 問題／詳細ページ
 ----------------------------------------------------------------------
 """
-def detail(request):
-    return HttpResponse("detail page")
+def detail(request, question_id):
+    return HttpResponse(str(question_id) + "'s detail.")
 
 """
 ----------------------------------------------------------------------
-問題／編集・新規作成ページ
+問題／新規作成ページ
 ----------------------------------------------------------------------
 """
-def edit(request):
-    return HttpResponse("edit page")
+def create(request):
+    return HttpResponse("create question page.")
 
 """
 ----------------------------------------------------------------------
-問題／編集・新規作成処理
+問題／新規作成処理
 ----------------------------------------------------------------------
 """
-def run_edit(request):
-    return HttpResponse("run_edit page")
+def run_create(request):
+    return HttpResponse("create question")
+
+"""
+----------------------------------------------------------------------
+問題／編集ページ
+----------------------------------------------------------------------
+"""
+def edit(request, question_id):
+    return HttpResponse(str(question_id) + "'s edit page.")
+
+"""
+----------------------------------------------------------------------
+問題／編集処理
+----------------------------------------------------------------------
+"""
+def run_edit(request, question_id):
+    return HttpResponse("edit question_id:" + str(question_id))
