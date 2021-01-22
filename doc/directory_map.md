@@ -13,12 +13,12 @@
 |0|ユーザー|プロフィール編集ページ| /user/<int: user_id>/edit/ | edit | /user/edit.html |ユーザー情報の編集<br>フォーム送信||
 ||ユーザー|プロフィール編集処理| /user/<int: user_id>/run/edit/ | run_edit ||ユーザー情報編集処理|プロフィール編集ページからPOSTで取得|
 ||ユーザー|ユーザー一覧ページ| /user/ | index | /user/index.html |ユーザーの表示||
-||フォロー|フォロー一覧ページ| /user/<int: user_id>/follow/ | follow | /follow/follow.html |フォローしているユーザーを表示<br>フォロー解除||
-||フォロー|フォロー解除処理| /user/<int: user_id>/follow/release?user_id= | release ||フォロー解除処理|フォロー一覧ページからPOSTで取得|
-||フォロー|フォロワー一覧ページ| /user/<int: user_id>/follower/ | follower | /follow/follower.html |フォローされているユーザーを表示||
-||フォロー|フォロー許可ページ| /user/<int: user_id>/follow/permit/ | permit | /follow/permit.html |フォロー申請の認証(プライベートアカウント)||
-||フォロー|フォロー許可処理| /user/<int: user_id>/follow/run/permit/ | run_permit ||フォロー申請の許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
-||フォロー|フォロー不許可処理| /user/<int: user_id>/follow/run/nopermit/ | run_nopermit ||フォロー申請の不許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
+||フレンド|フォロー一覧ページ| /friend/<int: user_id>/follow/ | follow | /follow/follow.html |フォローしているユーザーを表示<br>フォロー解除||
+||フレンド|フォロー解除処理| /friend/<int: user_id>/follow/release?user_id= | release ||フォロー解除処理|フォロー一覧ページからPOSTで取得|
+||フレンド|フォロワー一覧ページ| /friend/<int: user_id>/follower/ | follower | /follow/follower.html |フォローされているユーザーを表示||
+||フレンド|フォロー許可ページ| /friend/<int: user_id>/follow/permit/ | permit | /follow/permit.html |フォロー申請の認証(プライベートアカウント)||
+||フレンド|フォロー許可処理| /friend/<int: user_id>/follow/run/permit/ | run_permit ||フォロー申請の許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
+||フレンド|フォロー不許可処理| /friend/<int: user_id>/follow/run/nopermit/ | run_nopermit ||フォロー申請の不許可(プライベートアカウント)|フォロー許可ページからPOSTで取得|
 ||問題|問題一覧ページ| /question/list/ | question | /question/index.html |問題一覧の表示(全て)<br>ブックマークフォーム送信||
 ||問題|問題管理ページ| /question/<int: user_id>/manage/ | manage | /question/manage.html |問題一覧の表示(自作)||
 ||問題|ブックマーク処理| /question/list?user_id=&question_id= | bookmark ||ブックマーク処理|問題一覧ページからPOSTで取得|
