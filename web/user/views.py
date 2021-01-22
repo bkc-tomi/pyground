@@ -38,56 +38,72 @@ def login(request):
 ユーザー／ログイン処理
 ----------------------------------------------------------------------
 """
-def run_login(request):
-    return HttpResponse("run_login page")
+def run_login(request, user_id):
+    return HttpResponse("login user_id:" + str(user_id))
 
 """
 ----------------------------------------------------------------------
 ユーザー／ログアウト処理
 ----------------------------------------------------------------------
 """
-def run_logout(request):
-    return HttpResponse("run_logout page")
+def run_logout(request, user_id):
+    return HttpResponse("logout user_id:" + str(user_id))
 
 """
 ----------------------------------------------------------------------
 ユーザー／退会ページ
 ----------------------------------------------------------------------
 """
-def withdrawal(request):
-    return HttpResponse("withdrawal page")
+def withdrawal(request, user_id):
+    return HttpResponse("withdrawal user_id:" + str(user_id))
 
 """
 ----------------------------------------------------------------------
 ユーザー／退会処理
 ----------------------------------------------------------------------
 """
-def run_withdrawal(request):
-    return HttpResponse("run_withdrawal page")
+def run_withdrawal(request, user_id):
+    return HttpResponse("run_withdrawal user_id:" + str(user_id))
 
 """
 ----------------------------------------------------------------------
 ユーザー／プロフィール詳細ページ
 ----------------------------------------------------------------------
 """
-def detail(request):
-    return HttpResponse("detail page")
+def detail(request, user_id):
+    return HttpResponse(str(user_id) + "'s detail")
 
 """
 ----------------------------------------------------------------------
-ユーザー／プロフィール編集・新規作成ページ
+ユーザー／プロフィール新規作成ページ
 ----------------------------------------------------------------------
 """
-def edit(request):
-    return HttpResponse("edit page")
+def create(request):
+    return HttpResponse("'create user page")
 
 """
 ----------------------------------------------------------------------
-ユーザー／プロフィール編集・新規作成処理
+ユーザー／プロフィール新規作成処理
 ----------------------------------------------------------------------
 """
-def run_edit(request):
-    return HttpResponse("run_edit page")
+def run_create(request):
+    return HttpResponse("create user")
+
+"""
+----------------------------------------------------------------------
+ユーザー／プロフィール編集ページ
+----------------------------------------------------------------------
+"""
+def edit(request, user_id):
+    return HttpResponse(str(user_id) + "'s edit page")
+
+"""
+----------------------------------------------------------------------
+ユーザー／プロフィール編集処理
+----------------------------------------------------------------------
+"""
+def run_edit(request, user_id):
+    return HttpResponse("edit user_id:" + str(user_id))
 
 """
 ----------------------------------------------------------------------
@@ -95,4 +111,4 @@ def run_edit(request):
 ----------------------------------------------------------------------
 """
 def index(request):
-    return HttpResponse("index page")
+    return HttpResponse("user list.")
