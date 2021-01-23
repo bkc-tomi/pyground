@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.urls      import reverse
+from django.http      import HttpResponse, HttpResponseRedirect
 
 """
 ----------------------------------------------------------------------
@@ -7,7 +8,7 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def index(request):
-    return HttpResponse("playground")
+    return render(request, 'playground/index.html')
 
 """
 ----------------------------------------------------------------------
@@ -15,23 +16,27 @@ def index(request):
 ----------------------------------------------------------------------
 """
 def run(request):
-    return HttpResponse("run code")
+    return render(request, 'playground/index.html')
 
 """
 ----------------------------------------------------------------------
 プレイグランド／コード編集
 ----------------------------------------------------------------------
 """
-def index_edit(request, code_id):
-    return HttpResponse("playground code_id:" + str(code_id))
+def edit(request, code_id):
+    return render(request, 'playground/edit.html', {
+        'code_id': code_id,
+    })
 
 """
 ----------------------------------------------------------------------
-プレイグランド／実行処理
+プレイグランド／編集実行処理
 ----------------------------------------------------------------------
 """
-def run_code(request, code_id):
-    return HttpResponse("run code_id:" + str(code_id))
+def run_edit(request, code_id):
+    return render(request, 'playground/edit.html', {
+        'code_id': code_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -39,7 +44,9 @@ def run_code(request, code_id):
 ----------------------------------------------------------------------
 """
 def question(request, question_id):
-    return HttpResponse("question:" + str(question_id) + " playground")
+    return render(request, 'playground/question.html', {
+        'question_id': question_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -47,12 +54,24 @@ def question(request, question_id):
 ----------------------------------------------------------------------
 """
 def run_question(request, question_id):
-    return HttpResponse("run_question" + str(question_id))
+    return render(request, 'playground/question.html', {
+        'question_id': question_id,
+    })
 
 """
 ----------------------------------------------------------------------
 プレイグランド／保存処理
 ----------------------------------------------------------------------
 """
-def save(request, code_id):
-    return HttpResponse("save code_id:" + str(code_id))
+def save(request):
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(reverse('user:detail', args=(1,)))
+
+"""
+----------------------------------------------------------------------
+プレイグランド／保存処理
+----------------------------------------------------------------------
+"""
+def update(request, code_id):
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(reverse('user:detail', args=(1,)))

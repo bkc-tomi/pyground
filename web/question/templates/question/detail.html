@@ -1,0 +1,71 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Question Detail{% endblock %}
+{% block content %}
+    <h1 class="uk-margin-top uk-margin-left">問題詳細</h1>
+    <a href="{% url 'question:edit' question_id %}" class="uk-button uk-button-primary">編集</a>
+    <a href="{% url 'playground:question' question_id %}" class="uk-button uk-button-primary">解く</a>
+    <div>
+    <h5>問題名</h5>
+    <p>配列操作</p>
+    </div>
+    <div>
+    <h5>問題文</h5>
+    <p>次の配列を昇順に並び替えしてください。</p>
+    </div>
+    <div>
+    <h5>答え</h5>
+    <p>[1, 2, 3, 4, 5]</p>
+    </div>
+
+    <div>
+    <h5>正解者一覧</h5>
+    <div class="uk-flex uk-flex-wrap uk-flex-center">
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>user_1</p>
+            {% if False %}
+                <img data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% else %}
+                <img data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% endif %}
+
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>user_2</p>
+            {% if False %}
+                <img data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% else %}
+                <img data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% endif %}
+
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>user_3</p>
+            {% if False %}
+                <img data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% else %}
+                <img data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% endif %}
+
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>user_4</p>
+            {% if False %}
+                <img data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% else %}
+                <img data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% endif %}
+
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>user_5</p>
+            {% if False %}
+                <img data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% else %}
+                <img data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+{% endblock %}

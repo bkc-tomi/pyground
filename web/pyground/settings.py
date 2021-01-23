@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bookmark.apps.BookmarkConfig',
+    'friend.apps.FriendConfig',
+    'playground.apps.PlaygroundConfig',
+    'question.apps.QuestionConfig',
+    'top.apps.TopConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +61,9 @@ ROOT_URLCONF = 'pyground.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

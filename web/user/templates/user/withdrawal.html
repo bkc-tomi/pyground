@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Withdrawal{% endblock %}
+{% block content %}
+    <h1 class="uk-margin-top uk-margin-left">退会処理</h1>
+    <p>
+    ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。ここに文章が入ります。
+    </p>
+    <a class="uk-button uk-button-primary" href="{% url 'user:run_withdrawal' user_id %}">退会する</a>
+    
+{% endblock %}

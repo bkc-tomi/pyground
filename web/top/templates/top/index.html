@@ -1,0 +1,15 @@
+
+{% extends "base.html" %}
+{% block title %}Top{% endblock %}
+{% block content %}
+    <h1 class="uk-h1 uk-text-center">PyGround</h1>
+    <p class="uk-text-bold">
+        テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。
+        テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。
+        テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。
+        テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。テキスト。
+    </p>
+    <a href="{% url 'user:register' %}" class="uk-button uk-button-primary">登録</a>
+    <a href="{% url 'user:login' %}" class="uk-button uk-button-primary">ログイン</a>
+    
+{% endblock %}

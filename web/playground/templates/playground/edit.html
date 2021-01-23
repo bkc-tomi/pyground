@@ -1,0 +1,54 @@
+
+{% extends "base.html" %}
+{% block title %}コード編集{% endblock %}
+{% block content %}
+    <h1>プレイグランド：編集</h1>
+    {% comment %} 情報エリア {% endcomment %}
+    <div>
+        <div class="uk-flex uk-flex-right uk-card uk-card-default uk-margin-bottom">
+            <p class="uk-position-center">コード名:  {{ code_id }}</p>
+            <div>
+            <form action="{% url 'playground:update' code_id %}" method="post" id="save">
+                {% csrf_token %}
+                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">保存</button>
+            </form>
+            </div>
+        </div>
+        <div class="uk-flex uk-flex-right uk-card uk-card-default uk-margin-bottom">
+            <div>
+            <form action="{% url 'playground:save' %}" method="post" id="run">
+                {% csrf_token %}
+                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">実行</button>
+            </form>
+            </div>
+        </div>
+    </div>
+    {% comment %} 実行エリア {% endcomment %}
+    <div>
+    <form action="" method="post">
+        <table class="uk-width-1-1">
+            <tbody>
+                <tr>
+                    <td>
+                    <label for="code">コード</label>
+                    </td>
+                    <td>
+                    <label for="result">実行結果</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    <input type="hidden" name="code_id" value="{{ code_id }}" form="run save" />
+                    <textarea form="run save" class="uk-textarea uk-width-1-1" name="code" value="" rows="20" style="resize: none;">
+                    
+                    </textarea>
+                    </td>
+                    <td>
+                    <textarea class="uk-textarea uk-width-1-" name="result" value="" rows="20" style="resize: none;"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    </div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.urls      import reverse
+from django.http      import HttpResponse, HttpResponseRedirect
 
 """
 ----------------------------------------------------------------------
@@ -7,7 +8,7 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def questions(request):
-    return HttpResponse("questions page")
+    return render(request, 'question/index.html')
 
 """
 ----------------------------------------------------------------------
@@ -15,7 +16,9 @@ def questions(request):
 ----------------------------------------------------------------------
 """
 def manage(request, user_id):
-    return HttpResponse(str(user_id) + "'s question list.")
+    return render(request, 'question/manage.html', {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -23,7 +26,9 @@ def manage(request, user_id):
 ----------------------------------------------------------------------
 """
 def detail(request, question_id):
-    return HttpResponse(str(question_id) + "'s detail.")
+    return render(request, 'question/detail.html', {
+        'question_id': question_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -31,7 +36,7 @@ def detail(request, question_id):
 ----------------------------------------------------------------------
 """
 def create(request):
-    return HttpResponse("create question page.")
+    return render(request, 'question/create.html')
 
 """
 ----------------------------------------------------------------------
@@ -39,7 +44,8 @@ def create(request):
 ----------------------------------------------------------------------
 """
 def run_create(request):
-    return HttpResponse("create question")
+    # 問題管理ページへ
+    return HttpResponseRedirect(reverse('question:manage', args=(1,)))
 
 """
 ----------------------------------------------------------------------
@@ -47,7 +53,9 @@ def run_create(request):
 ----------------------------------------------------------------------
 """
 def edit(request, question_id):
-    return HttpResponse(str(question_id) + "'s edit page.")
+    return render(request, 'question/edit.html', {
+        'question_id': question_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -55,4 +63,5 @@ def edit(request, question_id):
 ----------------------------------------------------------------------
 """
 def run_edit(request, question_id):
-    return HttpResponse("edit question_id:" + str(question_id))
+    # 問題管理ページへ
+    return HttpResponseRedirect(reverse('question:manage'))

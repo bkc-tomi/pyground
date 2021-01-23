@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Question Create{% endblock %}
+{% block content %}
+    <h1 class="uk-margin-top uk-margin-left">問題作成</h1>
+    <form action="{% url 'question:run_create' %}" method="post">
+        {% csrf_token %}
+        <table>
+            <tbody>
+                <tr>
+                    <td><label for="question_name">問題名</label></td>
+                    <td><input class="uk-input" type="text" name="question_name" value="" /></td>
+                </tr>
+                <tr>
+                    <td><label for="question_text">問題文</label></td>
+                    <td><textarea class="uk-textarea" name="question_text" value="" rows="4"></textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="question_ans">答え</label></td>
+                    <td><textarea class="uk-textarea" name="question_ans" value="" rows="4"></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="uk-button uk-button-primary" type="submit" value="true">登録</button>
+    </form>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.urls      import reverse
+from django.http      import HttpResponse, HttpResponseRedirect
 
 """
 ----------------------------------------------------------------------
@@ -7,23 +8,9 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def follow(request, user_id):
-    return HttpResponse(str(user_id) + "'s follow list.")
-
-"""
-----------------------------------------------------------------------
-フレンド／フォロー処理
-----------------------------------------------------------------------
-"""
-def run_follow(request, user_id, follow_user_id):
-    return HttpResponse(str(user_id) + "is following user_id:" + str(follow_user_id))
-
-"""
-----------------------------------------------------------------------
-フレンド／フォロー解除処理
-----------------------------------------------------------------------
-"""
-def release(request, user_id, follow_id):
-    return HttpResponse(str(user_id) + "is release " + str(follow_id))
+    return render(request, 'friend/follow.html', {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -31,7 +18,27 @@ def release(request, user_id, follow_id):
 ----------------------------------------------------------------------
 """
 def follower(request, user_id):
-    return HttpResponse(str(user_id) + "'s follower list.")
+    return render(request, 'friend/follower.html', {
+        'user_id': user_id,
+    })
+
+"""
+----------------------------------------------------------------------
+フレンド／フォロー処理
+----------------------------------------------------------------------
+"""
+def run_follow(request, user_id, follow_user_id):
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+"""
+----------------------------------------------------------------------
+フレンド／フォロー解除処理
+----------------------------------------------------------------------
+"""
+def release(request, user_id, follow_id):
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 """
 ----------------------------------------------------------------------
@@ -39,7 +46,9 @@ def follower(request, user_id):
 ----------------------------------------------------------------------
 """
 def permit(request, user_id):
-    return HttpResponse(str(user_id) + "'s permit list.")
+    return render(request, 'friend/permit.html', {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -47,7 +56,8 @@ def permit(request, user_id):
 ----------------------------------------------------------------------
 """
 def run_permit(request, user_id, follow_id):
-    return HttpResponse(str(user_id) + "is permit follow_id:" + str(follow_id))
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 """
 ----------------------------------------------------------------------
@@ -55,7 +65,8 @@ def run_permit(request, user_id, follow_id):
 ----------------------------------------------------------------------
 """
 def run_nopermit(request, user_id, follow_id):
-    return HttpResponse(str(user_id) + "is not permit follow_id:" + str(follow_id))
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 
