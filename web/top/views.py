@@ -8,4 +8,4 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def top(request):
-    return HttpResponse("top page")
+    return render(request, 'top/index.html')

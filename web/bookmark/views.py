@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.urls      import reverse
+from django.http      import HttpResponse, HttpResponseRedirect
 
 """
 ----------------------------------------------------------------------
@@ -7,7 +8,9 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def index(request, user_id):
-    return HttpResponse(str(user_id) + "'s bookmark list.")
+    return render(request, 'bookmark/index.html', {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -15,7 +18,9 @@ def index(request, user_id):
 ----------------------------------------------------------------------
 """
 def run_bookmark(request, user_id, question_id):
-    return HttpResponse(str(user_id) + " is bookmark question_id: " + str(question_id))
+
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 """
 ----------------------------------------------------------------------
@@ -23,4 +28,6 @@ def run_bookmark(request, user_id, question_id):
 ----------------------------------------------------------------------
 """
 def release(request, user_id, question_id):
-    return HttpResponse(str(user_id) + " is release question_id: " + str(question_id))
+
+    # 前のページにリダイレクト
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

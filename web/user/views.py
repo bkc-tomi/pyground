@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.urls      import reverse
+from django.http      import HttpResponse, HttpResponseRedirect
+
+# from top.urls import urlpatterns
 
 """
 ----------------------------------------------------------------------
@@ -7,7 +10,7 @@ from django.http import HttpResponse
 ----------------------------------------------------------------------
 """
 def register(request):
-    return HttpResponse("register page")
+    return render(request, "user/register.html")
 
 """
 ----------------------------------------------------------------------
@@ -15,7 +18,7 @@ def register(request):
 ----------------------------------------------------------------------
 """
 def register_complete(request):
-    return HttpResponse("register_complete page")
+    return render(request, "user/register_complete.html")
 
 """
 ----------------------------------------------------------------------
@@ -23,7 +26,8 @@ def register_complete(request):
 ----------------------------------------------------------------------
 """
 def run_register(request):
-    return HttpResponse("run_register page")
+
+    return HttpResponseRedirect(reverse('user:register_complete'))
 
 """
 ----------------------------------------------------------------------
@@ -31,15 +35,15 @@ def run_register(request):
 ----------------------------------------------------------------------
 """
 def login(request):
-    return HttpResponse("login page")
+    return render(request, "user/login.html")
 
 """
 ----------------------------------------------------------------------
 ユーザー／ログイン処理
 ----------------------------------------------------------------------
 """
-def run_login(request, user_id):
-    return HttpResponse("login user_id:" + str(user_id))
+def run_login(request):
+    return HttpResponseRedirect(reverse('user:detail', args=(1,)))
 
 """
 ----------------------------------------------------------------------
@@ -47,7 +51,7 @@ def run_login(request, user_id):
 ----------------------------------------------------------------------
 """
 def run_logout(request, user_id):
-    return HttpResponse("logout user_id:" + str(user_id))
+    return HttpResponseRedirect(reverse('top:top'))
 
 """
 ----------------------------------------------------------------------
@@ -55,7 +59,9 @@ def run_logout(request, user_id):
 ----------------------------------------------------------------------
 """
 def withdrawal(request, user_id):
-    return HttpResponse("withdrawal user_id:" + str(user_id))
+    return render(request, "user/withdrawal.html", {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -63,7 +69,7 @@ def withdrawal(request, user_id):
 ----------------------------------------------------------------------
 """
 def run_withdrawal(request, user_id):
-    return HttpResponse("run_withdrawal user_id:" + str(user_id))
+    return HttpResponseRedirect(reverse('top:top'))
 
 """
 ----------------------------------------------------------------------
@@ -71,7 +77,9 @@ def run_withdrawal(request, user_id):
 ----------------------------------------------------------------------
 """
 def detail(request, user_id):
-    return HttpResponse(str(user_id) + "'s detail")
+    return render(request, "user/detail.html", {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -79,7 +87,7 @@ def detail(request, user_id):
 ----------------------------------------------------------------------
 """
 def create(request):
-    return HttpResponse("'create user page")
+    return render(request, "user/create.html")
 
 """
 ----------------------------------------------------------------------
@@ -87,7 +95,7 @@ def create(request):
 ----------------------------------------------------------------------
 """
 def run_create(request):
-    return HttpResponse("create user")
+    return HttpResponseRedirect(reverse('user:detail', args=(1,)))
 
 """
 ----------------------------------------------------------------------
@@ -95,7 +103,9 @@ def run_create(request):
 ----------------------------------------------------------------------
 """
 def edit(request, user_id):
-    return HttpResponse(str(user_id) + "'s edit page")
+    return render(request, "user/edit.html", {
+        'user_id': user_id,
+    })
 
 """
 ----------------------------------------------------------------------
@@ -103,7 +113,7 @@ def edit(request, user_id):
 ----------------------------------------------------------------------
 """
 def run_edit(request, user_id):
-    return HttpResponse("edit user_id:" + str(user_id))
+    return HttpResponseRedirect(reverse('user:detail', args=(user_id,)))
 
 """
 ----------------------------------------------------------------------
@@ -111,4 +121,4 @@ def run_edit(request, user_id):
 ----------------------------------------------------------------------
 """
 def index(request):
-    return HttpResponse("user list.")
+    return render(request, "user/index.html")

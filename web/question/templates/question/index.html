@@ -1,0 +1,35 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Question List{% endblock %}
+{% block content %}
+    <h1 class="uk-margin-top uk-margin-left">問題一覧</h1>
+
+    <div class="uk-flex uk-flex-wrap uk-flex-center">
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>question_1</p>
+
+            <a href="{% url 'question:detail' 1 %}" class="uk-button uk-button-primary uk-width-1-1">詳細</a>
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>question_2</p>
+
+            <a href="{% url 'question:detail' 2 %}" class="uk-button uk-button-primary uk-width-1-1">詳細</a>
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>question_3</p>
+
+            <a href="{% url 'question:detail' 3 %}" class="uk-button uk-button-primary uk-width-1-1">詳細</a>
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>question_4</p>
+
+            <a href="{% url 'question:detail' 4 %}" class="uk-button uk-button-primary uk-width-1-1">詳細</a>
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+            <p>question_5</p>
+
+            <a href="{% url 'question:detail' 5 %}" class="uk-button uk-button-primary uk-width-1-1">詳細</a>
+        </div>
+    </div>
+{% endblock %}
