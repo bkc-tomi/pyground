@@ -1,0 +1,127 @@
+/* register.html */
+#register-div {
+    margin-top: 100px;
+}
+#register-title {
+}
+#register-form-area {
+}
+#register-form {
+}
+#register-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* login.html */
+#login-div {
+    margin-top: 100px;
+}
+#login-title {
+}
+#login-form-area {
+}
+#login-form {
+}
+#login-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* create.html */
+#uc-div {
+    margin-top: 100px;
+}
+#uc-title {
+}
+#uc-form-area {
+}
+#uc-form {
+}
+#uc-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* detail.html */
+#ud-link {
+    float: right;
+}
+
+#ud-table {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.ud-td {
+    vertical-align: top;
+}
+
+/* edit.html */
+#ue-div {
+    margin-top: 100px;
+}
+#ue-title {
+}
+#ue-form-area {
+}
+#ue-form {
+}
+#ue-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* index.html */
+
+/* register-complete.html */
+#complete-div {
+    margin-top: 100px;
+}
+#complete-title {
+    margin-top: 100px;
+}
+#complete-text {
+    margin-top: 100px;
+}
+#complete-link {
+    margin-top: 100px;
+}
+
+/* withdrawal.html */
+#withdrawal-div {
+    margin-top: 100px;
+}
+#withdrawal-title {
+    margin-top: 100px;
+}
+#withdrawal-text {
+    margin-top: 100px;
+}
+#withdrawal-link {
+    margin-top: 100px;
+}
+
+
+
+@media screen and (max-width:1000px) {
+    /* reginster.html */
+
+    /* login.html */
+
+    /* create.html */
+
+    /* detail.html */
+
+    /* edit.html */
+
+    /* index.html */
+
+    /* register-complete.html */
+
+    /* withdrawal.html */
+}

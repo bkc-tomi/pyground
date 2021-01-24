@@ -6,6 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'css/uikit.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/basic.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bookmark.css' %}" rel="stylesheet">
+    <link href="{% static 'css/friend.css' %}" rel="stylesheet">
+    <link href="{% static 'css/playground.css' %}" rel="stylesheet">
+    <link href="{% static 'css/question.css' %}" rel="stylesheet">
+    <link href="{% static 'css/top.css' %}" rel="stylesheet">
+    <link href="{% static 'css/user.css' %}" rel="stylesheet">
     <script src="{% static 'js/uikit.min.js' %}"></script>
     <script src="{% static 'js/uikit-icons.min.js' %}"></script>
     <title>{% block title %}pyGround{% endblock %}</title>
@@ -56,9 +63,13 @@
         </nav>
     </div>
     {% comment %} コンテンツ {% endcomment %}
+    <div class="outer">
+    <div class="main-contents">
     {% block content %}
     {{ content }}
     {% endblock %}
+    </div>
+    </div>
     {% comment %} フッター {% endcomment %}
 </body>
 </html>

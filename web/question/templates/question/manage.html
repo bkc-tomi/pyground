@@ -3,10 +3,12 @@
 {% load static %}
 {% block title %}Questions{% endblock %}
 {% block content %}
-     <h1 class="uk-margin-top uk-margin-left">問題一覧</h1>
-    <a class="uk-button uk-button-primary" href="{% url 'question:create' %}">問題作成</a>
+    <h1 class="uk-margin-top uk-margin-left">問題管理</h1>
+    <div id="qm-link">
+        <a class="uk-button uk-button-primary" href="{% url 'question:create' %}">問題作成</a>
+    </div>
 
-    <div class="uk-flex uk-flex-wrap uk-flex-center">
+    <div id="qm-contents" class="uk-flex uk-flex-wrap uk-flex-center">
         <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
             <p>question_1</p>
 

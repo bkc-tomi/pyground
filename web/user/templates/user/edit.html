@@ -1,13 +1,22 @@
 {% extends "base.html" %}
 {% block title %}User Edit{% endblock %}
 {% block content %}
-    <h1 class="uk-margin-top uk-margin-left">ユーザー編集</h1>
-    <a class="uk-button uk-button-primary" href="{% url 'user:detail' user_id %}">プロフィール詳細へ</a>
-    <form action="{% url 'user:run_create' %}" method="post">
+<div class="flex-center flex-align">
+    <div id="ue-div">
+    <h1 class="uk-margin-top uk-margin-left">ユーザー情報の編集</h1>
+    <div id="ue-form-area" class="uk-card uk-card-default uk-card-body">
+    <form id="ue-form" action="{% url 'user:run_create' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="user_id" value="{{ user_id }}" />
-        <table>
+        <table id="ue-table">
             <tbody>
+                <tr>
+                    <td><label for="username">ユーザーID</label></td>
+                    <td>
+                        1
+                        <input class="uk-input" type="hidden" name="user_id" value="" size="50"/>
+                    </td>
+                </tr>
                 <tr>
                     <td><label for="icon">プロフィール画像</label></td>
                     <td>
@@ -19,18 +28,21 @@
                 </tr>
                 <tr>
                     <td><label for="username">ユーザーネーム</label></td>
-                    <td><input class="uk-input" type="text" name="username" value="" /></td>
+                    <td><input class="uk-input" type="text" name="username" value="" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="password">パスワード</label></td>
-                    <td><input class="uk-input" type="text" name="password" value="" /></td>
+                    <td><input class="uk-input" type="text" name="password" value="" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="profile">プロフィール</label></td>
-                    <td><textarea class="uk-textarea" name="profile" value="" rows="4"></textarea></td>
+                    <td><textarea class="uk-textarea" name="profile" value="" rows="4" size="50"></textarea></td>
                 </tr>
             </tbody>
         </table>
-        <button class="uk-button uk-button-primary" type="submit" value="true">登録</button>
+        <button class="uk-button uk-button-primary uk-width-1-1" type="submit" value="true">登録</button>
     </form>
+    </div>
+    </div>
+</div>
 {% endblock %}
