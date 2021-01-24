@@ -1,0 +1,58 @@
+/* create.html */
+#qc-div {
+    margin-top: 100px;
+}
+#qc-title {
+}
+#qc-form-area {
+}
+#qc-form {
+}
+#qc-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+/* detail.html */
+#qd-link {
+    float: right;
+}
+
+#qd-table {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.qd-td {
+    vertical-align: top;
+}
+
+/* edit.html */
+#qe-div {
+    margin-top: 100px;
+}
+#qe-title {
+}
+#qe-form-area {
+}
+#qe-form {
+}
+#qe-table {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+/* index.html */
+
+/* manage.html */
+#qm-link {
+    float: right;
+}
+
+#qm-contents {
+    margin-top: 100px;
+}
+
+@media screen and (max-width:1000px) {
+    
+}

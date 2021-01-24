@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block title %}User Create{% endblock %}
 {% block content %}
+<div class="flex-center flex-align">
+    <div id="uc-div">
     <h1 class="uk-margin-top uk-margin-left">ユーザー情報の登録</h1>
-    <form action="{% url 'user:run_create' %}" method="post">
+    <div id="uc-form-area" class="uk-card uk-card-default uk-card-body">
+    <form id="uc-form" action="{% url 'user:run_create' %}" method="post">
         {% csrf_token %}
-        <table>
+        <table id="uc-table">
             <tbody>
                 <tr>
                     <td><label for="icon">プロフィール画像</label></td>
@@ -17,18 +20,22 @@
                 </tr>
                 <tr>
                     <td><label for="username">ユーザーネーム</label></td>
-                    <td><input class="uk-input" type="text" name="username" value="" /></td>
+                    <td><input class="uk-input" type="text" name="username" value="" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="password">パスワード</label></td>
-                    <td><input class="uk-input" type="text" name="password" value="" /></td>
+                    <td><input class="uk-input" type="text" name="password" value="" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="profile">プロフィール</label></td>
-                    <td><textarea class="uk-textarea" name="profile" value="" rows="4"></textarea></td>
+                    <td><textarea class="uk-textarea" name="profile" value="" rows="4" size="50"></textarea></td>
                 </tr>
             </tbody>
         </table>
-        <button class="uk-button uk-button-primary" type="submit" value="true">登録</button>
+        <button class="uk-button uk-button-primary uk-width-1-1" type="submit" value="true">登録</button>
     </form>
+    </div>
+
+    </div>
+</div>
 {% endblock %}

@@ -2,39 +2,52 @@
 {% load static %}
 {% block title %}User Detail{% endblock %}
 {% block content %}
+<div class="flex-center">
     <h1 class="uk-margin-top uk-margin-left">プロフィール</h1>
-    <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
+    <div class="uk-card uk-card-default uk-card-body">
+    <div id="ud-link">
+        <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
+        {% if False %}
+            <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">フォローする</a>
+        {% else %}
+            <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">編集する</a>
+        {% endif %}
+    </div>
+    <br/>
+    <div>
     {% if False %}
-        <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">フォローする</a>
+        <img class="user-icon" data-src="" width="200px" height="200px" alt="profile-icon" uk-img>
     {% else %}
-        <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">編集する</a>
+        <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="200px" height="200px" alt="profile-icon" uk-img>
     {% endif %}
-    <br />
-    {% if False %}
-        <img data-src="" width="200px" height="200px" alt="profile-icon" uk-img>
-    {% else %}
-        <img data-src="{% static 'img/user-icon.png' %}" width="200px" height="200px" alt="profile-icon" uk-img>
-    {% endif %}
-    <div>
-    <h5>ユーザネーム</h5>
-    <p>田中　太郎</p>
     </div>
-    <div>
-    <h5>メールアドレス</h5>
-    <p>aaa@bbb.jp</p>
-    </div>
-    <div>
-    <h5>プロフィール</h5>
-    <p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-    </div>
-    <div>
-    <h5>フォロー</h5>
-    <p>100人</p>
-    </div>
-    <div>
-    <h5>フォロワー</h5>
-    <p>100人</p>
-    </div>
+    <hr />
+    <table id="ud-table">
+    <tbody>
+        <tr>
+            <td class="ud-td" width="200" height="40">ユーザネーム</td>
+            <td class="ud-td">田中　太郎</td>
+        </tr>
+        <tr>
+            <td class="ud-td" width="200" height="40">メールアドレス</td>
+            <td class="ud-td">aaa@bbb.jp</td>
+        </tr>
+        <tr>
+            <td class="ud-td" width="200" height="100">プロフィール</td>
+            <td class="ud-td">aaaaaaaaaaaaaaaaaaaaaaaaaaaaa</td>
+        </tr>
+        <tr>
+            <td class="ud-td" width="200" height="40">フォロー</td>
+            <td class="ud-td">100人</td>
+        </tr>
+        <tr>
+            <td class="ud-td" width="200" height="40">フォロー</td>
+            <td class="ud-td">フォロワー</td>
+        </tr>
+    </tbody>
+    </table>
+
+    <hr />
     <div>
     <h5>コード一覧</h5>
     <div class="uk-flex uk-flex-wrap uk-flex-center">
@@ -60,4 +73,6 @@
         </div>
     </div>
     </div>
+    </div>
+</div>
 {% endblock %}
