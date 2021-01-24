@@ -12,7 +12,7 @@ pyground
     ```
     $ docker-compose up -d
     ```
-3. ページを開く
+3. ページを開く  
     ブラウザで`http://localhost:8000`にアクセス
 
 ## 各種仕様書・設計書
@@ -21,5 +21,3 @@ pyground
 [ディレクトリマップ](./doc/directory_map.md)  
 [レイアウト](./doc/layout.pdf)  
 [論理データ設計](./doc/)  
-
-**設計から１０日で仕上げる。**
