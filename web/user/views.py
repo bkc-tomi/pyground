@@ -246,6 +246,11 @@ def run_login(request):
     初期値・値取得
     ---------------------------------------------------------
     """
+    login_user = {
+        'id'      : '',
+        'username': '',
+    }
+
     post_dict = {
         'email'   : request.POST['email'],
         'password': request.POST['password'],
@@ -270,6 +275,7 @@ def run_login(request):
     前処理
     ---------------------------------------------------------
     """
+    # データ取得
     user_list = User.objects.filter(
         email = post_dict['email'],
         password = post_dict['password']
@@ -286,7 +292,10 @@ def run_login(request):
     後処理
     ---------------------------------------------------------
     """
-
+    # ユーザーデータ作成
+    login_user['id']       = user_list[0].id
+    login_user['username'] = user_list[0].username
+    print(login_user)
     """
     ---------------------------------------------------------
     描画データ取得
@@ -298,9 +307,10 @@ def run_login(request):
     ページ遷移
     ---------------------------------------------------------
     """
-    if len(user_list) == 1:
+    if login_user:
         # ログイン成功
-        return HttpResponseRedirect(reverse('user:detail', args=(1,)))
+        request.session['login_user'] = login_user
+        return HttpResponseRedirect(reverse('user:detail', args=(login_user['id'],)))
     else:
         # ログイン失敗
         return HttpResponseRedirect(reverse('user:login'))
@@ -311,6 +321,16 @@ def run_login(request):
 ----------------------------------------------------------------------
 """
 def run_logout(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     初期値・値取得
@@ -339,7 +359,11 @@ def run_logout(request, user_id):
     後処理
     ---------------------------------------------------------
     """
-
+    # ログアウト処理
+    try:
+        del request.session['login_user']
+    except KeyError:
+        pass
     """
     ---------------------------------------------------------
     描画データ取得
@@ -359,6 +383,16 @@ def run_logout(request, user_id):
 ----------------------------------------------------------------------
 """
 def withdrawal(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     初期値・値取得
@@ -411,6 +445,16 @@ def withdrawal(request, user_id):
 def run_withdrawal(request, user_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     初期値・値取得
     ---------------------------------------------------------
     """
@@ -457,6 +501,16 @@ def run_withdrawal(request, user_id):
 ----------------------------------------------------------------------
 """
 def detail(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     初期値・値取得
@@ -554,10 +608,10 @@ def detail(request, user_id):
     except Code.DoesNotExist:
         raise Http404("Follow does not exist")
 
-    # フォローしているかどうかの判定 ★未実装
+    # フォローしているかどうかの判定
     temp = ''
     try:
-        temp = Follow.objects.filter(follow_user_id=1, followed_user_id=user_id)
+        temp = Follow.objects.filter(follow_user_id=login_user['id'], followed_user_id=user_id)
 
     except Code.DoesNotExist:
         raise Http404("Follow does not exist")
@@ -565,8 +619,8 @@ def detail(request, user_id):
     if temp:
         is_follow = True
 
-    # ログインユーザーの判定 ★未実装
-    if profile['id'] == 1:
+    # ログインユーザーの判定
+    if profile['id'] == login_user['id']:
         is_me = True
 
     """
@@ -589,6 +643,16 @@ def detail(request, user_id):
 ----------------------------------------------------------------------
 """
 def create(request):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     初期値・値取得
@@ -639,6 +703,16 @@ def create(request):
 def run_create(request):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     初期値・値取得
     ---------------------------------------------------------
     """
@@ -685,6 +759,24 @@ def run_create(request):
 ----------------------------------------------------------------------
 """
 def edit(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
     """
     ---------------------------------------------------------
     初期値・値取得
@@ -770,6 +862,16 @@ def edit(request, user_id):
 def run_edit(request, user_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     初期値・値取得
     ---------------------------------------------------------
     """
@@ -816,6 +918,16 @@ def run_edit(request, user_id):
 ----------------------------------------------------------------------
 """
 def index(request):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+    
     """
     ---------------------------------------------------------
     初期値・値取得

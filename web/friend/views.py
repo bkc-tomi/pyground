@@ -10,6 +10,16 @@ from django.http      import HttpResponse, HttpResponseRedirect
 def follow(request, user_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -58,6 +68,16 @@ def follow(request, user_id):
 ----------------------------------------------------------------------
 """
 def follower(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     値取得
@@ -110,6 +130,16 @@ def follower(request, user_id):
 def run_follow(request, user_id, follow_user_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -159,6 +189,16 @@ def run_follow(request, user_id, follow_user_id):
 def release(request, user_id, follow_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -206,6 +246,16 @@ def release(request, user_id, follow_id):
 ----------------------------------------------------------------------
 """
 def permit(request, user_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     値取得
@@ -258,6 +308,16 @@ def permit(request, user_id):
 def run_permit(request, user_id, follow_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -305,6 +365,16 @@ def run_permit(request, user_id, follow_id):
 ----------------------------------------------------------------------
 """
 def run_nopermit(request, user_id, follow_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+    
     """
     ---------------------------------------------------------
     値取得

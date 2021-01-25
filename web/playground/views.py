@@ -10,6 +10,16 @@ from django.http      import HttpResponse, HttpResponseRedirect
 def index(request):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -58,6 +68,16 @@ def index(request):
 def run(request):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -104,6 +124,16 @@ def run(request):
 ----------------------------------------------------------------------
 """
 def edit(request, code_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     値取得
@@ -156,6 +186,16 @@ def edit(request, code_id):
 def run_edit(request, code_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -204,6 +244,16 @@ def run_edit(request, code_id):
 ----------------------------------------------------------------------
 """
 def question(request, question_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     値取得
@@ -256,6 +306,16 @@ def question(request, question_id):
 def run_question(request, question_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -306,6 +366,16 @@ def run_question(request, question_id):
 def save(request):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -353,6 +423,16 @@ def save(request):
 ----------------------------------------------------------------------
 """
 def update(request, code_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+    
     """
     ---------------------------------------------------------
     値取得

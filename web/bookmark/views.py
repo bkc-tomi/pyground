@@ -10,6 +10,16 @@ from django.http      import HttpResponse, HttpResponseRedirect
 def index(request, user_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """z
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -60,6 +70,16 @@ def index(request, user_id):
 def run_bookmark(request, user_id, question_id):
     """
     ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
+    """
+    ---------------------------------------------------------
     値取得
     ---------------------------------------------------------
     """
@@ -107,6 +127,16 @@ def run_bookmark(request, user_id, question_id):
 ----------------------------------------------------------------------
 """
 def release(request, user_id, question_id):
+    """
+    ---------------------------------------------------------
+    セッション
+    ---------------------------------------------------------
+    """
+    if 'login_user' not in request.session:
+        return HttpResponseRedirect(reverse('top:top'))
+    
+    login_user = request.session['login_user']
+
     """
     ---------------------------------------------------------
     値取得
