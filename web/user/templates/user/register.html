@@ -5,7 +5,7 @@
     <div id="register-div">
     <h1 id="register-title" class="uk-margin-top uk-margin-left">登録</h1>
     <div id="register-form-area" class="uk-card uk-card-default uk-card-body">
-        <form id="register-form" action="{% url 'user:run_register' %}" method="post">
+        <form id="register-form" action="{% url 'user:run_register' %}" method="POST">
             {% csrf_token %}
             <table id="register-table">
                 <tbody>
@@ -27,7 +27,7 @@
                     </tr>
                 </tbody>
             </table>
-            <button type="submit" name="" value="" class="uk-button uk-button-primary uk-width-1-1">登録</button>
+            <button type="submit" name="btnEntry" value="True" class="uk-button uk-button-primary uk-width-1-1">登録</button>
         </form>
     </div>
     

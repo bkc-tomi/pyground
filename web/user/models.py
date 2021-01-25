@@ -22,18 +22,17 @@ class User(models.Model):
     update_at  : 更新日
     ----------------------------------------------------------------------
     """
-    username  = models.CharField(max_length=100, null=False, verbose_name="ユーザー名")
-    email     = models.EmailField(null=False, verbose_name="メールアドレス")
-    password  = models.CharField(max_length=255, null=False, verbose_name="パスワード")
+    username  = models.CharField(max_length=100,blank=False, verbose_name="ユーザー名")
+    email     = models.EmailField(blank=False, verbose_name="メールアドレス")
+    password  = models.CharField(max_length=255, blank=False, verbose_name="パスワード")
     image_icon   = models.ImageField(
         upload_to='user_icon/',
         default='user_icon/user_icon.png',
         blank=True,
-        null=True,
         verbose_name="ユーザーアイコン",
     )
-    create_at = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
-    update_at = models.DateTimeField(auto_now_add=True, null=False, verbose_name="更新日")
+    create_at = models.DateTimeField(auto_now=True, verbose_name="作成日")
+    update_at = models.DateTimeField(auto_now_add=True, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------
@@ -65,7 +64,7 @@ class Profile(models.Model):
     ----------------------------------------------------------------------
     """
     target_user  = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="対象ユーザー")
-    profile_text = models.CharField(max_length=255, null=False, verbose_name="プロフィール文")
+    profile_text = models.CharField(max_length=255, verbose_name="プロフィール文")
     publish      = models.BooleanField(default=False, verbose_name='公開設定')
 
     """
