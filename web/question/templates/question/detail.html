@@ -6,78 +6,58 @@
 <div class="flex-center">
     <h1 class="uk-margin-top uk-margin-left">問題詳細</h1>
     <div class="uk-card uk-card-default uk-card-body">
-    <div id="qd-link">
-    <a href="{% url 'question:edit' question_id %}" class="uk-button uk-button-primary">編集</a>
-    <a href="{% url 'playground:question' question_id %}" class="uk-button uk-button-primary">解く</a>
-    </div>
-
-    <table id="qd-table">
-    <tbody>
-        <tr>
-            <td class="ud-td" width="200" height="40">問題名</td>
-            <td class="ud-td">配列操作</td>
-        </tr>
-        <tr>
-            <td class="ud-td" width="200" height="100">問題文</td>
-            <td class="ud-td">次の配列を昇順に並び替えしてください。</td>
-        </tr>
-        <tr>
-            <td class="ud-td" width="200" height="100">答え</td>
-            <td class="ud-td">[1, 2, 3, 4, 5]</td>
-        </tr>
-    </tbody>
-    </table>
-
-    <hr />
-    <div>
-    <h5>正解者一覧</h5>
-    <div class="uk-flex uk-flex-wrap uk-flex-center">
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_1</p>
-            {% if False %}
-                <img class="user-icon" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+        <div id="qd-link">
+            <a href="{% url 'question:edit' question.id %}" class="uk-button uk-button-primary">編集</a>
+            {% if not is_bookmark %}
+            <a href="{% url 'bookmark:run_bookmark' question.id %}" class="uk-button uk-button-primary">ブックマーク</a>
             {% else %}
-                <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            <a href="" class="uk-button uk-button-default" disabled>ブックマーク済</a>
             {% endif %}
+            <a href="{% url 'playground:question' question.id %}" class="uk-button uk-button-primary">解く</a>
+        </div>
 
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_2</p>
-            {% if False %}
-                <img class="user-icon" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
+        <table id="qd-table">
+        <tbody>
+            <tr>
+                <td class="ud-td" width="200" height="40">問題名</td>
+                <td class="ud-td">{{ question.name }}</td>
+            </tr>
+            <tr>
+                <td class="ud-td" width="200" height="100">問題文</td>
+                <td class="ud-td">{{ question.question_text }}</td>
+            </tr>
+            <tr>
+                <td class="ud-td" width="200" height="100">入力</td>
+                <td class="ud-td">{{ question.question_input }}</td>
+            </tr>
+            <tr>
+                <td class="ud-td" width="200" height="100">出力</td>
+                <td class="ud-td">{{ question.question_output }}</td>
+            </tr>
+            <tr>
+                <td class="ud-td" width="200" height="100">コード</td>
+                <td class="ud-td">{{ question.default_code }}</td>
+            </tr>
+        </tbody>
+        </table>
 
+        <hr />
+        <div>
+            <h5>正解者一覧</h5>
+            <div class="uk-flex uk-flex-wrap uk-flex-center">
+                {% if correct_users %}
+                    {% for user in correct_users %}
+                    <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+                        <p>{{ user.username }}</p>
+                        <img class="user-icon" data-src="{{ user_image_icon.url }}" width="100px" height="100px" alt="profile-icon" uk-img>
+                        <a href="{% url 'user:detail' user.id %}" class="uk-button uk-button-primary">詳細</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>正解者はまだいません。</p>
+                {% endif %}
+            </div>
         </div>
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_3</p>
-            {% if False %}
-                <img class="user-icon" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_4</p>
-            {% if False %}
-                <img class="user-icon" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_5</p>
-            {% if False %}
-                <img class="user-icon" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-        </div>
-    </div>
-    </div>
     </div>
 </div>
 {% endblock %}

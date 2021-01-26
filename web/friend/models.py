@@ -19,7 +19,7 @@ class Follow(models.Model):
     テーブルカラムのモデルを定義
     follow_user   : フォローしたユーザー
     followed_user : フォローされたユーザー
-    create_at     : 作成日
+    udpate_at     : 更新日
     ----------------------------------------------------------------------
     """
     follow_user   = models.ForeignKey(
@@ -34,7 +34,7 @@ class Follow(models.Model):
         related_name="followed_user",
         verbose_name="フォローされたユーザー"
     )
-    create_at     = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
+    udpate_at     = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class Permit(models.Model):
     テーブルカラムのモデルを定義
     request_user : 申請ユーザー
     target_user  : 対象ユーザー
-    create_at    : 作成日
+    udpate_at    : 更新日
     ----------------------------------------------------------------------
     """
     request_user = models.ForeignKey(
@@ -77,7 +77,7 @@ class Permit(models.Model):
         related_name="target_user",
         verbose_name="対象ユーザー",
     )
-    create_at    = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
+    udpate_at    = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------

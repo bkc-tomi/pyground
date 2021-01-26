@@ -23,8 +23,7 @@ class Question(models.Model):
     question_input : 入力
     question_output: 出力
     default_code   : コード
-    create_at      : 作成日
-    udpate_at      : 更新日
+    update_at      : 更新日
     ----------------------------------------------------------------------
     """
     target_user     = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="対象ユーザー")
@@ -33,8 +32,7 @@ class Question(models.Model):
     question_input  = models.TextField(default="", verbose_name="入力")
     question_output = models.TextField(default="", verbose_name="出力")
     default_code    = models.TextField(default="", verbose_name="コード")
-    create_at       = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
-    update_at       = models.DateTimeField(auto_now_add=True, null=False, verbose_name="更新日")
+    update_at       = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------
@@ -61,12 +59,12 @@ class Correcter(models.Model):
     テーブルカラムのモデルを定義
     target_question : 対象問題
     correct_user    : 対象ユーザー
-    create_at       : 作成日
+    update_at       : 更新日
     ----------------------------------------------------------------------
     """
     target_question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="対象問題")
     correct_user    = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="対象ユーザー")
-    create_at       = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
+    update_at       = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------

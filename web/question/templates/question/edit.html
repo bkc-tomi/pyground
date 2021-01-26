@@ -7,29 +7,37 @@
     <div id="uc-div">
     <h1 class="uk-margin-top uk-margin-left">問題編集</h1>
     <div id="uc-form-area" class="uk-card uk-card-default uk-card-body">
-    <form id="uc-form" action="{% url 'question:run_create' %}" method="post">
+    <form id="uc-form" action="{% url 'question:run_edit' question.id %}" method="post">
         {% csrf_token %}
-        <input type="hidden" name="user_id" value="{{ question_id }}" />
+        <input type="hidden" name="user_id" value="{{ user_id }}" />
         <table id="uc-table">
             <tbody>
                 <tr>
-                    <td><label for="username">クエスチョンID</label></td>
+                    <td><label for="question_id">クエスチョンID</label></td>
                     <td>
-                        1
-                        <input class="uk-input" type="hidden" name="question_id" value="" size="50"/>
+                        {{ question.id }}
+                        <input class="uk-input" type="hidden" name="question_id" value="{{ question.id }}" size="50"/>
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="question_name">問題名</label></td>
-                    <td><input class="uk-input" type="text" name="question_name" value="" size="50"/></td>
+                    <td><label for="name">問題名</label></td>
+                    <td><input class="uk-input" type="text" name="name" value="{{ question.name }}" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="question_text">問題文</label></td>
-                    <td><textarea class="uk-textarea" name="question_text" value="" rows="4" size="50"></textarea></td>
+                    <td><textarea class="uk-textarea" name="question_text" value="" rows="4" size="50">{{ question.question_text }}</textarea></td>
                 </tr>
                 <tr>
-                    <td><label for="question_ans">答え</label></td>
-                    <td><textarea class="uk-textarea" name="question_ans" value="" rows="4" size="50"></textarea></td>
+                    <td><label for="question_input">入力</label></td>
+                    <td><textarea class="uk-textarea" name="question_input" value="" rows="4" size="50">{{ question.question_input }}</textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="question_output">出力</label></td>
+                    <td><textarea class="uk-textarea" name="question_output" value="" rows="4" size="50">{{ question.question_output }}</textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="default_code">コード</label></td>
+                    <td><textarea class="uk-textarea" name="default_code" value="" rows="4" size="50">{{ question.default_code }}</textarea></td>
                 </tr>
             </tbody>
         </table>

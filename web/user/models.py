@@ -18,21 +18,19 @@ class User(models.Model):
     email      : メールアドレス
     password   : パスワード
     image_icon : ユーザーアイコン
-    create_at  : 作成日
     update_at  : 更新日
     ----------------------------------------------------------------------
     """
-    username  = models.CharField(max_length=100,blank=False, verbose_name="ユーザー名")
-    email     = models.EmailField(blank=False, verbose_name="メールアドレス")
-    password  = models.CharField(max_length=255, blank=False, verbose_name="パスワード")
+    username     = models.CharField(max_length=100,blank=False, verbose_name="ユーザー名")
+    email        = models.EmailField(blank=False, verbose_name="メールアドレス")
+    password     = models.CharField(max_length=255, blank=False, verbose_name="パスワード")
     image_icon   = models.ImageField(
         upload_to='user_icon/',
         default='user_icon/user_icon.png',
         blank=True,
         verbose_name="ユーザーアイコン",
     )
-    create_at = models.DateTimeField(auto_now=True, verbose_name="作成日")
-    update_at = models.DateTimeField(auto_now_add=True, verbose_name="更新日")
+    udpate_at    = models.DateTimeField(auto_now=True, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------

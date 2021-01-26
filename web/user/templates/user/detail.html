@@ -4,6 +4,7 @@
 {% block content %}
 <div class="flex-center">
     <h1 class="uk-margin-top uk-margin-left">プロフィール</h1>
+    {% if is_me or profile.publish or follow_id %}
     <div class="uk-card uk-card-default uk-card-body">
     <div id="ud-link">
         <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
@@ -11,10 +12,10 @@
         {% if is_me %}
             <a class="uk-button uk-button-primary" href="{% url 'user:edit' profile.id %}">編集する</a>
         {% else %}
-            {% if not is_follow %}
-                <a class="uk-button uk-button-primary" href="{% url 'friend:follow' profile.id %}">フォローする</a>
+            {% if follow_id %}
+            <a class="uk-button uk-button-default" href="{% url 'friend:release' follow_id %}">フォロー解除</a>
             {% else %}
-                <a class="uk-button uk-button-default" href="{% url 'friend:follow' profile.id %}">フォロー解除</a>
+            <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' profile.id %}">フォローする</a>
             {% endif %}
         {% endif %}
     </div>
@@ -69,5 +70,16 @@
 
     </div>
     </div>
+    {% else %}
+    <div class="uk-card uk-card-default uk-card-body">
+        <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
+        {% if is_permit %}
+        <a class="uk-button uk-button-default" href="" disabled>フォロー申請中</a>
+        {% else %}
+        <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' profile.id %}">フォローする</a>
+        {% endif %}
+        <p>このユーザーは非公開です。</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

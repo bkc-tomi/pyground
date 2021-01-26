@@ -5,30 +5,27 @@
     <div id="uc-div">
     <h1 class="uk-margin-top uk-margin-left">ユーザー情報の登録</h1>
     <div id="uc-form-area" class="uk-card uk-card-default uk-card-body">
-    <form id="uc-form" action="{% url 'user:run_create' %}" method="post">
+    <form id="uc-form" action="{% url 'user:run_create' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="hidden" name="id" value="{{ target_user_id }}" />
         <table id="uc-table">
             <tbody>
                 <tr>
-                    <td><label for="icon">プロフィール画像</label></td>
+                    <td><label for="image_icon">プロフィール画像</label></td>
                     <td>
                         <div uk-form-custom="target: true">
-                            <input type="file" name="icon">
+                            <input type="file" name="image_icon">
                             <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="username">ユーザーネーム</label></td>
-                    <td><input class="uk-input" type="text" name="username" value="" size="50"/></td>
-                </tr>
-                <tr>
-                    <td><label for="password">パスワード</label></td>
-                    <td><input class="uk-input" type="text" name="password" value="" size="50"/></td>
-                </tr>
-                <tr>
                     <td><label for="profile">プロフィール</label></td>
                     <td><textarea class="uk-textarea" name="profile" value="" rows="4" size="50"></textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="publish">公開</label></td>
+                    <td><input type="checkbox" name="publish"></td>
                 </tr>
             </tbody>
         </table>

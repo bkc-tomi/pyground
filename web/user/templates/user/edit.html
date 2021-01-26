@@ -5,14 +5,14 @@
     <div id="ue-div">
     <h1 class="uk-margin-top uk-margin-left">ユーザー情報の編集</h1>
     <div id="ue-form-area" class="uk-card uk-card-default uk-card-body">
-    <form id="ue-form" action="{% url 'user:run_create' %}" method="post">
+    <form id="ue-form" action="{% url 'user:run_edit' profile.id %}" method="post"  enctype="multipart/form-data">
         {% csrf_token %}
         <table id="ue-table">
             <tbody>
                 <tr>
                     <td><label for="id">ユーザーID</label></td>
                     <td>
-                        1
+                        {{ profile.id }}
                         <input class="uk-input" type="hidden" name="id" value="{{ profile.id }}" size="50"/>
                     </td>
                 </tr>
@@ -23,7 +23,7 @@
                     </td>
                     <td>
                         <div uk-form-custom="target: true">
-                            <input type="file" name="icon">
+                            <input type="file" name="image_icon">
                             <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>
                         </div>
                     </td>
@@ -39,6 +39,15 @@
                 <tr>
                     <td><label for="profile">プロフィール</label></td>
                     <td><textarea class="uk-textarea" name="profile" rows="4" size="50">{{ profile.profile_text }}</textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="publish">公開</label></td>
+                    <input type="hidden" name="publish" value="off" >
+                    {% if profile.publish %}
+                        <td><input type="checkbox" name="publish" value="on" checked></td>
+                    {% else %}
+                        <td><input type="checkbox" name="publish" value="on"></td>
+                    {% endif %}
                 </tr>
             </tbody>
         </table>
