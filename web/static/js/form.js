@@ -147,8 +147,9 @@ function runQuestionPost(question_id) {
     // 要素の追加
     tokenTag    = '<input type="hidden" name="csrfmiddlewaretoken" value='+ csrfToken + '>';
     codeTag     = '<textarea name="code">'+  code.value + '</textarea>';
+    answerTag   = '<textarea name="answer">'+  answer.value + '</textarea>';
 
-    f.innerHTML = tokenTag + codeTag;
+    f.innerHTML = tokenTag + codeTag + answerTag;
     
     // フォームの送信
     document.body.append(f);
