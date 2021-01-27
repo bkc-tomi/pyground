@@ -29,8 +29,9 @@
             <div class="uk-navbar-right">
 
                 <ul class="uk-navbar-nav">
-                    <li><a href="{% url 'user:detail' 1 %}" class="uk-active uk-margin-left uk-margin-right uk-button uk-button-text uk-text-emphasis">user_1</a></li>
-                    <li><a class="uk-button uk-button-text uk-text-emphasis" href="{% url 'user:run_logout' 1 %}">ログアウト</a></li>
+                {% if login_user %}
+                    <li><a href="{% url 'user:detail' login_user.id %}" class="uk-active uk-margin-left uk-margin-right uk-button uk-button-text uk-text-emphasis">{{ login_user.username }}</a></li>
+                    <li><a class="uk-button uk-button-text uk-text-emphasis" href="{% url 'user:run_logout' login_user.id %}">ログアウト</a></li>
                     <li>
                         <a class="uk-margin-left uk-margin-right uk-button uk-button-text" href="#"><span uk-navbar-toggle-icon></span></a>
                         <div class="uk-navbar-dropdown">
@@ -39,23 +40,24 @@
 
                                 <p class="uk-text-bold uk-text-primary">問題</p>
                                 <li><a href="{% url 'question:questions' %}" class="uk-text-bold">問題一覧</a></li>
-                                <li><a href="{% url 'question:manage' 1 %}" class="uk-text-bold">問題管理</a></li>
+                                <li><a href="{% url 'question:manage' login_user.id %}" class="uk-text-bold">問題管理</a></li>
 
                                 <p class="uk-text-bold uk-text-primary">フレンド</p>
-                                <li><a href="{% url 'friend:follow' 1 %}" class="uk-text-bold">フォロー一覧</a></li>
-                                <li><a href="{% url 'friend:follower' 1 %}" class="uk-text-bold">フォロワー一覧</a></li>
-                                <li><a href="{% url 'friend:permit' 1 %}" class="uk-text-bold">フォロー申請一覧</a></li>
+                                <li><a href="{% url 'friend:follow' login_user.id %}" class="uk-text-bold">フォロー一覧</a></li>
+                                <li><a href="{% url 'friend:follower' login_user.id %}" class="uk-text-bold">フォロワー一覧</a></li>
+                                <li><a href="{% url 'friend:permit' login_user.id %}" class="uk-text-bold">フォロー申請一覧</a></li>
 
                                 <p class="uk-text-bold uk-text-primary">ブックマーク</p>
-                                <li><a href="{% url 'bookmark:index' 1 %}" class="uk-text-bold">ブックマーク一覧</a></li>
+                                <li><a href="{% url 'bookmark:index' login_user.id %}" class="uk-text-bold">ブックマーク一覧</a></li>
 
                                 <p class="uk-text-bold uk-text-primary">ユーザー</p>
                                 <li><a href="{% url 'user:index' %}" class="uk-text-bold">ユーザー一覧</a></li>
-                                <li><a href="{% url 'user:detail' 1 %}" class="uk-text-bold">プロフィール</a></li>
-                                <li><a href="{% url 'user:withdrawal' 1 %}" class="uk-text-bold">退会</a></li>
+                                <li><a href="{% url 'user:detail' login_user.id %}" class="uk-text-bold">プロフィール</a></li>
+                                <li><a href="{% url 'user:withdrawal' %}" class="uk-text-bold">退会</a></li>
                             </ul>
                         </div>
                     </li>
+                {% endif %}
                 </ul>
 
             </div>

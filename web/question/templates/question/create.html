@@ -9,19 +9,28 @@
     <div id="qc-form-area" class="uk-card uk-card-default uk-card-body">
     <form id="qc-form" action="{% url 'question:run_create' %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="target_user_id" value="{{ target_user_id }}"
         <table id="qc-table">
             <tbody>
                 <tr>
-                    <td><label for="question_name">問題名</label></td>
-                    <td><input class="uk-input" type="text" name="question_name" value="" size="50"/></td>
+                    <td><label for="name">問題名</label></td>
+                    <td><input class="uk-input" type="text" name="name" value="" size="50"/></td>
                 </tr>
                 <tr>
                     <td><label for="question_text">問題文</label></td>
                     <td><textarea class="uk-textarea" name="question_text" value="" rows="4" size="50"></textarea></td>
                 </tr>
                 <tr>
-                    <td><label for="question_ans">答え</label></td>
-                    <td><textarea class="uk-textarea" name="question_ans" value="" rows="4" size="50"></textarea></td>
+                    <td><label for="question_input">入力</label></td>
+                    <td><textarea class="uk-textarea" name="question_input" value="" rows="4" size="50"></textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="question_output">出力(答え)</label></td>
+                    <td><textarea class="uk-textarea" name="question_output" value="" rows="4" size="50"></textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="default_code">コード</label></td>
+                    <td><textarea class="uk-textarea" name="default_code" value="" rows="4" size="50"></textarea></td>
                 </tr>
             </tbody>
         </table>

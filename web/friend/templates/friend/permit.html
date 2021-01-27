@@ -4,61 +4,38 @@
 {% block content %}
     <h1 class="uk-margin-top uk-margin-left">フォロー申請一覧</h1>
 
-    <div class="uk-flex uk-flex-wrap uk-flex-center">
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_1</p>
-            {% if False %}
-                <img class="user-icon margin-auto" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+    <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+        <h2 class="uk-margin-top uk-margin-left">フォロー申請されているもの</h2>
+        <div class="uk-flex uk-flex-wrap uk-flex-center">
+            {% if permit_list %}
+            {% for permit in permit_list %}
+            <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+                <p>{{ permit.user.username }}</p>
+                <img class="user-icon margin-auto" data-src="{{ permit.user.image_icon.url }}" width="100px" height="100px" alt="profile-icon" uk-img>
+                
+                <a href="{% url 'friend:run_permit' permit.id %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
+                <a href="{% url 'friend:run_nopermit' permit.id %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
+            </div>
+            {% endfor %}
             {% else %}
-                <img class="user-icon margin-auto" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+            <p>現在申請はありません。</p>
             {% endif %}
-
-            <a href="{% url 'friend:run_permit' 1 1 %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
-            <a href="{% url 'friend:run_nopermit' 1 1 %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
         </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_2</p>
-            {% if False %}
-                <img class="user-icon margin-auto" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
+    </div>
+    <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+        <h2 class="uk-margin-top uk-margin-left">フォロー申請しているもの</h2>
+        <div class="uk-flex uk-flex-wrap uk-flex-center">
+            {% if permited_list %}
+                {% for permit in permited_list %}
+                <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+                    <p>{{ permit.user.username }}</p>
+                    <img class="user-icon margin-auto" data-src="{{ permit.user.image_icon.url }}" width="100px" height="100px" alt="profile-icon" uk-img>
+                    <a href="{% url 'friend:run_nopermit' permit.id %}" class="uk-button uk-button-primary uk-width-1-1">申請取り消し</a>
+                </div>
+                {% endfor %}
             {% else %}
-                <img class="user-icon margin-auto" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
+                <p>現在申請しているものはありません。</p>
             {% endif %}
-
-            <a href="{% url 'friend:run_permit' 1 2 %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
-            <a href="{% url 'friend:run_nopermit' 1 2 %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_3</p>
-            {% if False %}
-                <img class="user-icon margin-auto" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon margin-auto" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-
-            <a href="{% url 'friend:run_permit' 1 3 %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
-            <a href="{% url 'friend:run_nopermit' 1 3 %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_4</p>
-            {% if False %}
-                <img class="user-icon margin-auto" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon margin-auto" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-
-            <a href="{% url 'friend:run_permit' 1 4 %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
-            <a href="{% url 'friend:run_nopermit' 1 4 %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>user_5</p>
-            {% if False %}
-                <img class="user-icon margin-auto" data-src="" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% else %}
-                <img class="user-icon margin-auto" data-src="{% static 'img/user-icon.png' %}" width="100px" height="100px" alt="profile-icon" uk-img>
-            {% endif %}
-
-            <a href="{% url 'friend:run_permit' 1 5 %}" class="uk-button uk-button-primary uk-width-1-1">許可</a>
-            <a href="{% url 'friend:run_nopermit' 1 5 %}" class="uk-button uk-button-primary uk-width-1-1">不許可</a>
         </div>
     </div>
 {% endblock %}

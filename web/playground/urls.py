@@ -11,5 +11,5 @@ urlpatterns = [
     path('question/<int:question_id>/'         , views.question    , name='question'),
     path('question/<int:question_id>/run/'     , views.run_question, name='run_question'),
     path('save/'                               , views.save        , name='save'),
-    path('<int:code_id>/upate/'                , views.update      , name='update'),
+    path('<int:code_id>/update/'               , views.update      , name='update'),
 ]

@@ -21,12 +21,12 @@ class Bookmark(models.Model):
     テーブルカラムのモデルを定義
     target_user    : 対象ユーザー
     target_question: 対象問題
-    create_at      : 作成日
+    update_at      : 更新日
     ----------------------------------------------------------------------
     """
     target_user     = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="対象ユーザー")
     target_question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="対象問題")
-    create_at = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
+    update_at       = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------

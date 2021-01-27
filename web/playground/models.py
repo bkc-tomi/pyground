@@ -18,15 +18,15 @@ class Code(models.Model):
     ----------------------------------------------------------------------
     テーブルカラムのモデルを定義
     target_user : 対象ユーザー
+    name        : コード名
     code        : 対象コード
-    create_at   : 作成日
     update_at   : 更新日
     ----------------------------------------------------------------------
     """
     target_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="対象ユーザー")
+    name        = models.CharField(max_length=255, null=True, verbose_name="コード名")
     code        = models.TextField(verbose_name="対象コード")
-    create_at   = models.DateTimeField(auto_now=True, null=False, verbose_name="作成日")
-    update_at   = models.DateTimeField(auto_now_add=True, null=False, verbose_name="更新日")
+    update_at   = models.DateTimeField(auto_now=True, null=False, verbose_name="更新日")
 
     """
     ----------------------------------------------------------------------
@@ -38,4 +38,4 @@ class Code(models.Model):
     ----------------------------------------------------------------------
     """
     def __str__(self):
-        return self.code
+        return self.name

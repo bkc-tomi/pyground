@@ -4,45 +4,48 @@
 {% block content %}
 <div class="flex-center">
     <h1 class="uk-margin-top uk-margin-left">プロフィール</h1>
+    {% if is_me or profile.publish or follow_id %}
     <div class="uk-card uk-card-default uk-card-body">
     <div id="ud-link">
         <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
-        {% if False %}
-            <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">フォローする</a>
+
+        {% if is_me %}
+            <a class="uk-button uk-button-primary" href="{% url 'user:edit' profile.id %}">編集する</a>
         {% else %}
-            <a class="uk-button uk-button-primary" href="{% url 'user:edit' 1 %}">編集する</a>
+            {% if follow_id %}
+            <a class="uk-button uk-button-default" href="{% url 'friend:release' follow_id %}">フォロー解除</a>
+            {% else %}
+            <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' profile.id %}">フォローする</a>
+            {% endif %}
         {% endif %}
     </div>
     <br/>
     <div>
-    {% if False %}
-        <img class="user-icon" data-src="" width="200px" height="200px" alt="profile-icon" uk-img>
-    {% else %}
-        <img class="user-icon" data-src="{% static 'img/user-icon.png' %}" width="200px" height="200px" alt="profile-icon" uk-img>
-    {% endif %}
+    <img class="user-icon" data-src="{{ profile.image_icon.url }}" width="200px" height="200px" alt="profile-icon" uk-img>
+
     </div>
     <hr />
     <table id="ud-table">
     <tbody>
         <tr>
             <td class="ud-td" width="200" height="40">ユーザネーム</td>
-            <td class="ud-td">田中　太郎</td>
+            <td class="ud-td">{{ profile.username }}</td>
         </tr>
         <tr>
             <td class="ud-td" width="200" height="40">メールアドレス</td>
-            <td class="ud-td">aaa@bbb.jp</td>
+            <td class="ud-td">{{ profile.email }}</td>
         </tr>
         <tr>
             <td class="ud-td" width="200" height="100">プロフィール</td>
-            <td class="ud-td">aaaaaaaaaaaaaaaaaaaaaaaaaaaaa</td>
+            <td class="ud-td">{{ profile.profile_text }}</td>
         </tr>
         <tr>
             <td class="ud-td" width="200" height="40">フォロー</td>
-            <td class="ud-td">100人</td>
+            <td class="ud-td">{{ follow_num }}人</td>
         </tr>
         <tr>
-            <td class="ud-td" width="200" height="40">フォロー</td>
-            <td class="ud-td">フォロワー</td>
+            <td class="ud-td" width="200" height="40">フォロワー</td>
+            <td class="ud-td">{{ follower_num }}人</td>
         </tr>
     </tbody>
     </table>
@@ -50,29 +53,33 @@
     <hr />
     <div>
     <h5>コード一覧</h5>
+    {% if codes %}
     <div class="uk-flex uk-flex-wrap uk-flex-center">
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>code_1</p>
-            <a href="{% url 'playground:edit' 1 %}" class="uk-button uk-button-primary">開く</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>code_2</p>
-            <a href="{% url 'playground:edit' 2 %}" class="uk-button uk-button-primary">開く</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>code_3</p>
-            <a href="{% url 'playground:edit' 3 %}" class="uk-button uk-button-primary">開く</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>code_4</p>
-            <a href="{% url 'playground:edit' 4 %}" class="uk-button uk-button-primary">開く</a>
-        </div>
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
-            <p>code_5</p>
-            <a href="{% url 'playground:edit' 5 %}" class="uk-button uk-button-primary">開く</a>
-        </div>
+        {% for code in codes %}
+            <div class="uk-card uk-card-default uk-card-body uk-card-hover uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
+                <p>{{ code.name }}</p>
+                <a href="{% url 'playground:edit' code.id %}" class="uk-button uk-button-primary">開く</a>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="uk-flex uk-flex-wrap uk-flex-center">
+        <p>まだコードがありません。</p>
+    </div>
+    {% endif %}
+
     </div>
     </div>
+    {% else %}
+    <div class="uk-card uk-card-default uk-card-body">
+        <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
+        {% if is_permit %}
+        <a class="uk-button uk-button-default" href="" disabled>フォロー申請中</a>
+        {% else %}
+        <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' profile.id %}">フォローする</a>
+        {% endif %}
+        <p>このユーザーは非公開です。</p>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
