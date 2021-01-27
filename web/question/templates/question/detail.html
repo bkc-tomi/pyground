@@ -7,7 +7,9 @@
     <h1 class="uk-margin-top uk-margin-left">問題詳細</h1>
     <div class="uk-card uk-card-default uk-card-body">
         <div id="qd-link">
+            {% if question.target_user_id == user_id %}
             <a href="{% url 'question:edit' question.id %}" class="uk-button uk-button-primary">編集</a>
+            {% endif %}
             {% if not is_bookmark %}
             <a href="{% url 'bookmark:run_bookmark' question.id %}" class="uk-button uk-button-primary">ブックマーク</a>
             {% else %}
