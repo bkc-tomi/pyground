@@ -302,7 +302,7 @@ def run_edit(request, question_id):
     except Exception as e:
         print('err:' + str(e))
         # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     """
     ---------------------------------------------------------

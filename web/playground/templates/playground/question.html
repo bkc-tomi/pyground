@@ -1,41 +1,37 @@
 
 {% extends "base.html" %}
+{% load static %}
 {% block title %}問題{% endblock %}
 {% block content %}
     <h1>プレイグランド</h1>
     {% comment %} 情報エリア {% endcomment %}
     <div>
-        <div class="uk-flex uk-flex-right uk-card uk-card-default uk-margin-bottom">
-            <div>
-            <form action="{% url 'playground:save' %}" method="post" id="save">
-                {% csrf_token %}
-                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">保存</button>
-            </form>
-            </div>
-        </div>
         <div class="uk-card uk-card-default uk-margin-bottom">
-            <div >
-                <p>問題名</p>
-                <p>テキストテキスト</p>
+            <div>
+                <p class="uk-margin-top uk-margin-left">問題名</p>
+                <p class="uk-margin-left">{{ question.name }}</p>
             </div>
-            <div >
-                <p>問題文</p>
-                <p>
-                    テキストテキストテキストテキストテキストテキストテキストテキスト
+            <div>
+                <p class="uk-margin-left">問題文</p>
+                <p class="uk-margin-bottom uk-margin-left">
+                    {{ question.question_text }}
                 </p>
-                <input type="hidden" name="answer" form="run" value="" />
+                <input 
+                    id="question-answer"
+                    type="hidden" name="answer" 
+                    value="{{ question.question_output }}" 
+                />
             </div>
             <div class="uk-position-center-right">
-            <form action="{% url 'playground:run_question' question_id %}" method="post" id="run">
-                {% csrf_token %}
-                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">実行</button>
-            </form>
+                <button 
+                    class="uk-button uk-button-primary uk-margin-right" 
+                    onclick="runQuestionPost({{ question.id }})"
+                >実行</button>
             </div>
         </div>
     </div>
     {% comment %} 実行エリア {% endcomment %}
     <div>
-    <form action="" method="post">
         <table class="uk-width-1-1">
             <tbody>
                 <tr>
@@ -48,21 +44,21 @@
                 </tr>
                 <tr>
                     <td>
-                    <textarea form="run save" class="uk-textarea uk-width-1-1" name="code" value="" rows="20" style="resize: none;">
-def fib(n):
-    a, b = 0, 1
-    while a < n:
-        print(a, end=' ')
-        a, b = b, a+b
-    print()
-fib(1000)</textarea>
+                    <textarea 
+                        id="question-code" 
+                        class="uk-textarea uk-width-1-1" 
+                        name="code" value="" rows="20" style="resize: none;"
+                    >{{ question.default_code }}</textarea>
                     </td>
                     <td>
-                    <textarea class="uk-textarea uk-width-1-" name="result" value="" rows="20" style="resize: none;"></textarea>
+                    <textarea 
+                        class="uk-textarea uk-width-1-1" 
+                        name="result" value="" rows="20" style="resize: none;"
+                    ></textarea>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </form>
     </div>
+    <script src="{% static 'js/form.js' %}"></script>
 {% endblock %}

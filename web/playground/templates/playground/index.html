@@ -1,25 +1,32 @@
-
 {% extends "base.html" %}
+{% load static %}
 {% block title %}プレイグランド{% endblock %}
 {% block content %}
     <h1>プレイグランド</h1>
     {% comment %} 情報エリア {% endcomment %}
     <div>
         <div class="uk-flex uk-flex-right uk-card uk-card-default uk-margin-bottom">
-            <p class="uk-position-center">コード名:  コード_1</p>
+            <div class="uk-flex uk-flex-left uk-width-4-5">
+                <label for="code-name" class="uk-width-1-5 uk-margin-top uk-margin-bottom">コード名: </label>
+                <input 
+                    id="index-code-name" 
+                    class="uk-input uk-width-4-5 uk-margin-top uk-margin-bottom" 
+                    type="text" name="code-name" placeholder="新規作成" value="{{ code_name }}"
+                >
+            </div>
             <div>
-            <form action="{% url 'playground:run' %}" method="post" id="save">
-            {% csrf_token %}
-                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">保存</button>
-            </form>
+                <button 
+                    class="uk-button uk-button-primary uk-margin-right  uk-margin-top uk-margin-bottom" 
+                    onclick="savePost()"
+                >保存</button>
             </div>
         </div>
         <div class="uk-flex uk-flex-right uk-card uk-card-default uk-margin-bottom">
             <div>
-            <form action="{% url 'playground:save' %}" method="post" id="run">
-            {% csrf_token %}
-                <button class="uk-button uk-button-primary uk-margin-right" type="submit" value="true">実行</button>
-            </form>
+            <button 
+                class="uk-button uk-button-primary uk-margin-right uk-margin-top uk-margin-bottom" 
+                onclick="runPost()"
+            >実行</button>
             </div>
         </div>
     </div>
@@ -38,21 +45,22 @@
                 </tr>
                 <tr>
                     <td>
-                    <textarea form="run save" class="uk-textarea uk-width-1-1" name="code" value="" rows="20" style="resize: none;">
-def fib(n):
-    a, b = 0, 1
-    while a < n:
-        print(a, end=' ')
-        a, b = b, a+b
-    print()
-fib(1000)</textarea>
+                    <textarea 
+                        id="index-code" 
+                        class="uk-textarea uk-width-1-1" 
+                        name="code" value="" rows="20" style="resize: none;"
+                    >{{ code }}</textarea>
                     </td>
                     <td>
-                    <textarea class="uk-textarea uk-width-1-" name="result" value="" rows="20" style="resize: none;"></textarea>
+                    <textarea 
+                        class="uk-textarea uk-width-1-1" 
+                        name="result" value="" rows="20" style="resize: none;"
+                    >{{ result }}</textarea>
                     </td>
                 </tr>
             </tbody>
         </table>
     </form>
     </div>
+    <script src="{% static 'js/form.js' %}"></script>
 {% endblock %}
