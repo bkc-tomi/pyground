@@ -15,20 +15,43 @@ def register(request):
     ユーザー／登録ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    # ログイン状態なら別ページへ遷移
-    if 'login_user' in request.session:
-        user = request.session['login_user']
-        return HttpResponseRedirect(
-            reverse('user:detail', args=(user['id'], ))
-        )
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        # ログイン状態なら別ページへ遷移
+        if 'login_user' in request.session:
+            user = request.session['login_user']
+            return HttpResponseRedirect(
+                reverse('user:detail', args=(user['id'], ))
+            )
+
+        # -------------------------------------------------------
+        # 描画データ作成
+        # -------------------------------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+            del request.session['message']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/register.html", {
+            'message': message,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/register.html")
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def register_complete(request):
     """
@@ -36,18 +59,31 @@ def register_complete(request):
     ユーザー／登録完了ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+        
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/register_complete.html")
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/register_complete.html")
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_register(request):
     """
@@ -55,45 +91,45 @@ def run_register(request):
     ユーザー／登録処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # 初期値・値取得
-    # -------------------------------------------------------
-    # 初期化 ------------------------------------------
-    login_user = {
-        'id'      : '',
-        'username': '',
-    }
-    # 入力値取得 ---------------------------------------
-    post_dict = {
-        'username': request.POST['username'],
-        'email'   : request.POST['email'],
-        'password': request.POST['password'],
-        'check'   : request.POST['check'],
-    }
-
-    # -------------------------------------------------------
-    # バリデーション
-    # -------------------------------------------------------
-    # 未入力 -------------------------------------------
-    empty_list = ''
-    for key, value in post_dict.items():
-        if value == '':
-            empty_list += ', ' + str(key)
-        
-    if empty_list != '':
-        print('未入力項目:' + str(empty_list))
-        return HttpResponseRedirect(reverse('user:register'))
-
-    # passwordのチェック --------------------------------
-    if post_dict['password'] != post_dict['check']:
-        print('パスワードと確認用が異なります。')
-        return HttpResponseRedirect(reverse('user:register'))
-
-    # -------------------------------------------------------
-    # データベース保存
-    # -------------------------------------------------------
-    # DB処理 --------------------------------------
     try:
+        # -------------------------------------------------------
+        # 初期値・値取得
+        # -------------------------------------------------------
+        # 初期化 ------------------------------------------
+        login_user = {
+            'id'      : '',
+            'username': '',
+        }
+        # 入力値取得 ---------------------------------------
+        post_dict = {
+            'username': request.POST['username'],
+            'email'   : request.POST['email'],
+            'password': request.POST['password'],
+            'check'   : request.POST['check'],
+        }
+
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        # 未入力 -------------------------------------------
+        empty_list = ''
+        for key, value in post_dict.items():
+            if value == '':
+                empty_list += ', ' + str(key)
+            
+        if empty_list != '':
+            request.session['message'] = '未入力項目:' + str(empty_list)
+            return HttpResponseRedirect(reverse('user:register'))
+
+        # passwordのチェック --------------------------------
+        if post_dict['password'] != post_dict['check']:
+            request.session['message'] = 'パスワードとパスワード(確認)が異なります。'
+            return HttpResponseRedirect(reverse('user:register'))
+
+        # -------------------------------------------------------
+        # データベース保存
+        # -------------------------------------------------------
+        # DB処理 --------------------------------------
         user = User(
             username = post_dict['username'],
             email    = post_dict['email'],
@@ -101,24 +137,32 @@ def run_register(request):
         )
         user.save()
 
-    except:
-        print('データベース登録エラー')
-        return HttpResponseRedirect(reverse('user:register'))
+        # -------------------------------------------------------
+        # 後処理
+        # -------------------------------------------------------
+        # ユーザーデータ作成 ---------------------------------
+        login_user['id']       = user.id
+        login_user['username'] = user.username
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        # セッション保持
+        request.session['login_user'] = login_user
+        # ページ遷移
+        return HttpResponseRedirect(reverse('user:register_complete'))
 
     # -------------------------------------------------------
-    # 後処理
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーデータ作成 ---------------------------------
-    login_user['id']       = user.id
-    login_user['username'] = user.username
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    # セッション保持
-    request.session['login_user'] = login_user
-    # ページ遷移
-    return HttpResponseRedirect(reverse('user:register_complete'))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def login(request):
     """
@@ -126,20 +170,43 @@ def login(request):
     ユーザー／ログインページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    # ログイン状態なら別ページへ遷移
-    if 'login_user' in request.session:
-        user = request.session['login_user']
-        return HttpResponseRedirect(
-            reverse('user:detail', args=(user['id'], ))
-        )
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        # ログイン状態なら別ページへ遷移
+        if 'login_user' in request.session:
+            user = request.session['login_user']
+            return HttpResponseRedirect(
+                reverse('user:detail', args=(user['id'], ))
+            )
+
+        # -------------------------------------------------------
+        # 描画データ作成
+        # -------------------------------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+            del request.session['message']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/login.html", {
+            'message': message,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/login.html")
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_login(request):
     """
@@ -147,62 +214,80 @@ def run_login(request):
     ユーザー／ログイン処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # 初期値・値取得
-    # -------------------------------------------------------
-
-    # 入力値取得 -----------------------------------
-    post_dict = {
-        'email'   : request.POST['email'],
-        'password': request.POST['password'],
-    }
-
-    # -------------------------------------------------------
-    # バリデーション
-    # -------------------------------------------------------
-    # 未入力 ---------------------------------------
-    empty_list = ''
-    for key, value in post_dict.items():
-        if value == '':
-            empty_list += ', ' + str(key)
-        
-    if empty_list != '':
-        print('未入力項目:' + str(empty_list))
-        return HttpResponseRedirect(reverse('user:login'))
-
-    # -------------------------------------------------------
-    # 前処理
-    # -------------------------------------------------------
-    # データ取得 ------------------------------------
     try:
+        # -------------------------------------------------------
+        # 初期値・値取得
+        # -------------------------------------------------------
+
+        # 入力値取得 -----------------------------------
+        post_dict = {
+            'email'   : request.POST['email'],
+            'password': request.POST['password'],
+        }
+
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        # 未入力 ---------------------------------------
+        empty_list = ''
+        for key, value in post_dict.items():
+            if value == '':
+                empty_list += ', ' + str(key)
+            
+        if empty_list != '':
+            request.session['message'] = '未入力項目:' + str(empty_list)
+            return HttpResponseRedirect(reverse('user:login'))
+
+        # -------------------------------------------------------
+        # 前処理
+        # -------------------------------------------------------
+        # データ取得 ------------------------------------
         user_list = User.objects.filter(
             email = post_dict['email'],
             password = post_dict['password']
         )
-    except:
-        return HttpResponseRedirect(reverse('user:login'))
+        
+
+        # -------------------------------------------------------
+        # 後処理
+        # -------------------------------------------------------
+        login_user = {}
+        # ユーザーデータ作成 ------------------------------
+        if user_list:
+            login_user['id']       = user_list[0].id
+            login_user['username'] = user_list[0].username
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        if login_user:
+            # ログイン成功 --------------------------------
+            request.session['login_user'] = login_user
+            return HttpResponseRedirect(
+                reverse('user:detail', args=(login_user['id'],))
+            )
+        else:
+            # ログイン失敗 --------------------------------
+            request.session['message'] = 'ログインに失敗しました。メールアドレス・パスワードをお確かめください。'
+            return HttpResponseRedirect(reverse('user:login'))
 
     # -------------------------------------------------------
-    # 後処理
+    # エラー処理
     # -------------------------------------------------------
-    login_user = {}
-    # ユーザーデータ作成 ------------------------------
-    if user_list:
-        login_user['id']       = user_list[0].id
-        login_user['username'] = user_list[0].username
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    if login_user:
-        # ログイン成功 --------------------------------
-        request.session['login_user'] = login_user
-        return HttpResponseRedirect(
-            reverse('user:detail', args=(login_user['id'],))
-        )
-    else:
-        # ログイン失敗 --------------------------------
+    # 該当ユーザーが見つからない時
+    except User.DoesNotExist:
+        request.session['message'] = 'ログインに失敗しました。メールアドレス・パスワードをお確かめください。'
         return HttpResponseRedirect(reverse('user:login'))
+    
+    # その他エラー
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
     
 def run_logout(request, user_id):
     """
@@ -210,27 +295,37 @@ def run_logout(request, user_id):
     ユーザー／ログアウト処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 後処理
-    # -------------------------------------------------------
-    # ログアウト処理
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 後処理
+        # -------------------------------------------------------
+        # ログアウト処理
         del request.session['login_user']
-    except KeyError:
-        pass
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return HttpResponseRedirect(reverse('top:top'))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return HttpResponseRedirect(reverse('top:top'))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def withdrawal(request):
     """
@@ -238,18 +333,31 @@ def withdrawal(request):
     ユーザー／退会ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/withdrawal.html")
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/withdrawal.html")
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_withdrawal(request):
     """
@@ -257,28 +365,37 @@ def run_withdrawal(request):
     ユーザー／退会処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    # 退会処理 ----------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        # 退会処理 ----------------------------------------
         # ユーザーをDBから削除
         user = User.objects.get(pk=login_user['id'])
         user.delete()
         # ユーザーをセッションから削除
         del request.session['login_user']
         return HttpResponseRedirect(reverse('top:top'))
-    except:
-        print('ユーザーの削除に失敗')
-        return render(request, "user/withdrawal.html")
+    
+    # -------------------------------------------------------
+    # エラー処理
+    # -------------------------------------------------------
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def detail(request, user_id):
     """
@@ -286,122 +403,105 @@ def detail(request, user_id):
     ユーザー／プロフィール詳細ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 初期値・値取得
-    # -------------------------------------------------------
-    # 初期値 ---------------------------------------
-    profile = {
-        'id'          : '',
-        'image_icon'  : {},
-        'username'    : '',
-        'email'       : '',
-        'password'    : '',
-        'profile_text': '',
-        'publish'     : '',
-    }
-    follow_num   = 0
-    follower_num = 0
-    follow_id    = False
-    is_me        = False
-    is_permit    = False
-    codes        = {}
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    # ユーザーの取得 ----------------------------------
-    temp = ''
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 初期値・値取得
+        # -------------------------------------------------------
+        # 初期値 ---------------------------------------
+        profile = {
+            'id'          : '',
+            'image_icon'  : {},
+            'username'    : '',
+            'email'       : '',
+            'password'    : '',
+            'profile_text': '',
+            'publish'     : '',
+        }
+        follow_num   = 0
+        follower_num = 0
+        follow_id    = False
+        is_me        = False
+        is_permit    = False
+        codes        = {}
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーの取得 ----------------------------------
+        temp = ''
         temp = User.objects.get(pk=user_id)
 
-    except User.DoesNotExist:
-        raise Http404("User does not exist")
+        profile['id']         = temp.id
+        profile['username']   = temp.username
+        profile['email']      = temp.email
+        profile['image_icon'] = temp.image_icon
 
-    profile['id']         = temp.id
-    profile['username']   = temp.username
-    profile['email']      = temp.email
-    profile['image_icon'] = temp.image_icon
-    
-
-    # プロフィールの取得 --------------------------------
-    temp = ''
-    try:
+        # プロフィールの取得 --------------------------------
+        temp = ''
         temp = Profile.objects.filter(target_user_id=user_id)[0:1]
 
-    except Profile.DoesNotExist:
-        raise Http404("Profile does not exist")
-    
-    if len(temp) > 0:
-        temp2 = temp[0]
-        profile['profile_text'] = temp2.profile_text
-        profile['publish']      = temp2.publish
+        if len(temp) > 0:
+            temp2 = temp[0]
+            profile['profile_text'] = temp2.profile_text
+            profile['publish']      = temp2.publish
 
-    # コードの取得 ------------------------------------
-    try:
+        # コードの取得 ------------------------------------
         codes = Code.objects.filter(target_user_id=user_id)
 
-    except Code.DoesNotExist:
-        raise Http404("Code does not exist")
-
-    # フォロー数の取得 ---------------------------------
-    try:
+        # フォロー数の取得 ---------------------------------
         follow_num = Follow.objects.filter(follow_user_id=user_id).count()
-
-    except Code.DoesNotExist:
-        raise Http404("Follow does not exist")
-    
-    # フォロワー数の取得 -------------------------------
-    try:
+        
+        # フォロワー数の取得 -------------------------------
         follower_num = Follow.objects.filter(followed_user_id=user_id).count()
 
-    except Code.DoesNotExist:
-        raise Http404("Follow does not exist")
-
-    # フォローしているかどうかの判定 ---------------------
-    temp = ''
-    try:
+        # フォローしているかどうかの判定 ---------------------
+        temp = ''
         temp = Follow.objects.filter(follow_user_id=login_user['id'], followed_user_id=user_id)
+        
+        if len(temp) == 1:
+            follow_id = temp[0].id
 
-    except Code.DoesNotExist:
-        raise Http404("Follow does not exist")
-    
-    if len(temp) == 1:
-        follow_id = temp[0].id
+        # ログインユーザーの判定 ----------------------------
+        if profile['id'] == login_user['id']:
+            is_me = True
 
-    # ログインユーザーの判定 ----------------------------
-    if profile['id'] == login_user['id']:
-        is_me = True
-
-    # 申請中の判定 ------------------------------------
-    try:
+        # 申請中の判定 ------------------------------------
         permit = Permit.objects.filter(target_user_id=user_id)
         if permit:
             is_permit = True
 
-    except Exception as e:
-        print('申請中の判定err:' + str(e))
-        return render(request, "user/index.html")
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/detail.html", {
+            'profile'     : profile,
+            'codes'       : codes,
+            'follow_num'  : follow_num,
+            'follower_num': follower_num,
+            'follow_id'   : follow_id,
+            'is_me'       : is_me,
+            'is_permit'   : is_permit,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/detail.html", {
-        'profile'     : profile,
-        'codes'       : codes,
-        'follow_num'  : follow_num,
-        'follower_num': follower_num,
-        'follow_id'   : follow_id,
-        'is_me'       : is_me,
-        'is_permit'   : is_permit,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def create(request):
     """
@@ -409,26 +509,39 @@ def create(request):
     ユーザー／プロフィール新規作成ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 値取得
+        # -------------------------------------------------------
+        # ユーザーID取得 ---------------------------------
+        target_user_id = login_user['id']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/create.html", {
+            'target_user_id': target_user_id,
+        })
 
     # -------------------------------------------------------
-    # 値取得
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーID取得 ---------------------------------
-    target_user_id = login_user['id']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, "user/create.html", {
-        'target_user_id': target_user_id,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_create(request):
     """
@@ -436,42 +549,34 @@ def run_create(request):
     ユーザー／プロフィール新規作成処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
 
-    # -------------------------------------------------------
-    # データベース保存
-    # -------------------------------------------------------
+        # -------------------------------------------------------
+        # データベース保存
+        # -------------------------------------------------------
 
-    # DB処理
-    if request.POST['id']:
-        try:
+        # DB処理
+        if request.POST['id']:
             user = User(
                 id=request.POST['id'],
                 image_icon=request.FILES['image_icon'],
             )
             user.save()
-        except Exception as e:
-            print('userデータベース登録エラー')
-            print('type:' + str(type(e)))
-            print('args:' + str(e.args))
-            # print('message:' + e.message)
-            print('e自身:' + str(e))
-            return HttpResponseRedirect(reverse('user:create'))
 
-    # プロフィール ----------------------------------------
-    # 情報保管
-    temp_pub = False
-    if request.POST['publish'] == 'on':
-        temp_pub = True
+        # プロフィール ----------------------------------------
+        # 情報保管
+        temp_pub = False
+        if request.POST['publish'] == 'on':
+            temp_pub = True
 
-    # DB処理
-    try:
+        # DB処理
         profile = Profile(
             profile_text   = request.POST['profile'],
             publish        = temp_pub,
@@ -479,24 +584,28 @@ def run_create(request):
         )
         profile.save()
 
+        # -------------------------------------------------------
+        # 後処理
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return HttpResponseRedirect(reverse('user:detail', args=(user_id,)))
+
+    # -------------------------------------------------------
+    # エラー処理
+    # -------------------------------------------------------
     except Exception as e:
-            print('profileデータベース登録エラー')
-            print('type:' + str(type(e)))
-            print('args:' + str(e.args))
-            # print('message:' + e.message)
-            print('e自身:' + str(e))
-            return HttpResponseRedirect(reverse('user:create'))
-
-    # -------------------------------------------------------
-    # 後処理
-    # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return HttpResponseRedirect(reverse('user:detail', args=(user_id,)))
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def edit(request, user_id):
     """
@@ -504,61 +613,66 @@ def edit(request, user_id):
     ユーザー／プロフィール編集ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 初期値・値取得
-    # -------------------------------------------------------
-    disp_profile = {
-        'id'          : '',
-        'image_icon'  : {},
-        'username'    : '',
-        'password'    : '',
-        'profile_text': '',
-        'publish'     : '',
-    }
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    
-    # ユーザーの取得 ---------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 初期値・値取得
+        # -------------------------------------------------------
+        disp_profile = {
+            'id'          : '',
+            'image_icon'  : {},
+            'username'    : '',
+            'password'    : '',
+            'profile_text': '',
+            'publish'     : '',
+        }
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        
+        # ユーザーの取得 ---------------------------------
         temp = User.objects.get(pk=user_id)
 
-    except User.DoesNotExist:
-        raise Http404("User does not exist")
+        disp_profile['id']         = temp.id
+        disp_profile['username']   = temp.username
+        disp_profile['password']   = temp.password
+        disp_profile['image_icon'] = temp.image_icon
+        
 
-    disp_profile['id']         = temp.id
-    disp_profile['username']   = temp.username
-    disp_profile['password']   = temp.password
-    disp_profile['image_icon'] = temp.image_icon
-    
-
-    # プロフィールの取得 -------------------------------
-    try:
+        # プロフィールの取得 -------------------------------
         temp = Profile.objects.filter(target_user_id=user_id)[0:1]
 
-    except User.DoesNotExist:
-        raise Http404("User does not exist")
-    
-    if len(temp) > 0:
-        temp2 = temp[0]
-        disp_profile['profile_text'] = temp2.profile_text
-        disp_profile['publish']      = temp2.publish
+        if len(temp) > 0:
+            temp2 = temp[0]
+            disp_profile['profile_text'] = temp2.profile_text
+            disp_profile['publish']      = temp2.publish
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/edit.html", {
+            'profile': disp_profile,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, "user/edit.html", {
-        'profile': disp_profile,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_edit(request, user_id):
     """
@@ -566,21 +680,20 @@ def run_edit(request, user_id):
     ユーザー／プロフィール編集処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
 
-    # -------------------------------------------------------
-    # データベース保存
-    # -------------------------------------------------------
-    # ユーザー -------------------------------------------
-    # DB処理
-    if request.POST['id']:
-        try:
+        # -------------------------------------------------------
+        # データベース保存
+        # -------------------------------------------------------
+        # ユーザー -------------------------------------------
+        if request.POST['id']:
             # 対象レコード取得
             user = User.objects.get(pk=request.POST['id'])
             if 'image_icon' in request.FILES:
@@ -591,20 +704,8 @@ def run_edit(request, user_id):
 
             # 更新
             user.save()
-
-        except Exception as e:
-            print('userデータベース登録エラー')
-            print('type:' + str(type(e)))
-            print('args:' + str(e.args))
-            # print('message:' + e.message)
-            print('e自身:' + str(e))
-            return HttpResponseRedirect(
-                reverse('user:edit', args=(login_user['id'],)),
-            )
-
-    # プロフィール ----------------------------------------
-    # DB処理
-    try:
+        
+        # プロフィール ----------------------------------------
         # 情報保管
         print(request.POST)
         temp_pub = False
@@ -619,20 +720,22 @@ def run_edit(request, user_id):
         # 更新
         profile.save()
 
-    except Exception as e:
-            print('profileデータベース登録エラー')
-            print('type:' + str(type(e)))
-            print('args:' + str(e.args))
-            # print('message:' + e.message)
-            print('e自身:' + str(e))
-            return HttpResponseRedirect(
-                reverse('user:edit', args=(login_user['id'],)),
-            )
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return HttpResponseRedirect(reverse('user:detail', args=(user_id,)))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return HttpResponseRedirect(reverse('user:detail', args=(user_id,)))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def index(request):
     """
@@ -640,23 +743,36 @@ def index(request):
     ユーザー／ユーザー一覧ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        user_list = User.objects.all()
+        print(user_list)
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, "user/index.html", {
+            'user_list': user_list,
+        })
 
     # -------------------------------------------------------
-    # 描画データ取得
+    # エラー処理
     # -------------------------------------------------------
-    user_list = User.objects.all()
-    print(user_list)
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, "user/index.html", {
-        'user_list': user_list,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))

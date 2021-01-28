@@ -27,6 +27,7 @@ urlpatterns = [
     path('question/'  , include('question.urls')),
     path('bookmark/'  , include('bookmark.urls')),
     path('playground/', include('playground.urls')),
+    path('errors/'    , include('errors.urls')),
     path('admin/'     , admin.site.urls),
 ]
 

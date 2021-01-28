@@ -13,40 +13,54 @@ def follow(request, user_id):
     フレンド／フォロー一覧
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+        
+        # フォロー情報取得 ----------------------------------
+        temps = Follow.objects.filter(follow_user_id=user_id)
+
+        # 描画オブジェクトの作成 -----------------------------
+        follow_list = []
+
+        for temp in temps:
+            user = User.objects.get(pk=temp.followed_user_id)
+            follow = {
+                'id'  : temp.id,
+                'user': user,
+            }
+            follow_list.append(follow)
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'friend/follow.html', {
+            'user_id'    : user_id,
+            'follow_list': follow_list,
+        })
 
     # -------------------------------------------------------
-    # 描画データ取得
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # フォロー情報取得 ----------------------------------
-    temps = Follow.objects.filter(follow_user_id=user_id)
-
-    # 描画オブジェクトの作成 -----------------------------
-    follow_list = []
-    for temp in temps:
-        user = User.objects.get(pk=temp.followed_user_id)
-        follow = {
-            'id'  : temp.id,
-            'user': user,
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
         }
-        follow_list.append(follow)
-    
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, 'friend/follow.html', {
-        'user_id'    : user_id,
-        'follow_list': follow_list,
-    })
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def follower(request, user_id):
     """
@@ -54,41 +68,55 @@ def follower(request, user_id):
     フレンド／フォロワー一覧
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # フォロー情報取得 ----------------------------------
-    temp = Follow.objects.filter(followed_user_id=user_id)
-
-    # 描画オブジェクトの作成 -----------------------------
-    follower_list = []
-    for follow in temp:
-        user = User.objects.get(pk=follow.follow_user_id)
-        follower = {
-            'user': user,
-            'follower': follow,
-        }
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
         
-        follower_list.append(follower)
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # フォロー情報取得 ----------------------------------
+        temp = Follow.objects.filter(followed_user_id=user_id)
+
+        # 描画オブジェクトの作成 -----------------------------
+        follower_list = []
+
+        for follow in temp:
+            user = User.objects.get(pk=follow.follow_user_id)
+            follower = {
+                'user': user,
+                'follower': follow,
+            }
+            
+            follower_list.append(follower)
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'friend/follower.html', {
+            'user_id'      : user_id,
+            'follower_list': follower_list,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, 'friend/follower.html', {
-        'user_id'      : user_id,
-        'follower_list': follower_list,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_follow(request, follow_user_id):
     """
@@ -96,26 +124,26 @@ def run_follow(request, follow_user_id):
     フレンド／フォロー処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース処理
-    # -------------------------------------------------------
-    # 各種ID取得 --------------------------------------
-    # フォローユーザー
-    follow_user = login_user['id']
-
-    # フォローされたユーザー
-    followed_user = follow_user_id
-
-    # DB登録 -----------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース処理
+        # -------------------------------------------------------
+        # 各種ID取得 --------------------------------------
+        # フォローユーザー
+        follow_user = login_user['id']
+
+        # フォローされたユーザー
+        followed_user = follow_user_id
+
+        # DB登録 -----------------------------------------
         user_prof = Profile.objects.get(target_user_id=follow_user_id)
 
         if user_prof.publish:
@@ -133,14 +161,23 @@ def run_follow(request, follow_user_id):
             )
             permit.save()
 
-    except Exception as e:
-        print('err:' + str(e))
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        # 前のページにリダイレクト
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def release(request, follow_id):
     """
@@ -148,32 +185,39 @@ def release(request, follow_id):
     フレンド／フォロー解除処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース処理
-    # -------------------------------------------------------
-    # DB削除 ------------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース処理
+        # -------------------------------------------------------
+        # DB削除 ------------------------------------------
         follow = Follow.objects.get(pk=follow_id)
         follow.delete()
 
-    except Exception as e:
-        print('err:' + str(e))
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
         # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def permit(request, user_id):
     """
@@ -181,56 +225,69 @@ def permit(request, user_id):
     フレンド／フォロー許可ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # 申請一覧 ----------------------------------------
+        # フォロー情報取得
+        temps = Permit.objects.filter(target_user_id=user_id)
+
+        # 描画オブジェクトの作成
+        permit_list = []
+        for temp in temps:
+            user = User.objects.get(pk=temp.request_user_id)
+            permit = {
+                'id'  : temp.id,
+                'user': user,
+            }
+            permit_list.append(permit)
+
+        # 被申請一覧 ---------------------------------------
+        # フォロー情報取得
+        temps = Permit.objects.filter(request_user_id=user_id)
+
+        # 描画オブジェクトの作成
+        permited_list = []
+        for temp in temps:
+            user = User.objects.get(pk=temp.target_user_id)
+            permit = {
+                'id'  : temp.id,
+                'user': user,
+            }
+            permited_list.append(permit)
+        
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'friend/permit.html', {
+            'user_id'      : user_id,
+            'permit_list'  : permit_list,
+            'permited_list': permited_list,
+        })
 
     # -------------------------------------------------------
-    # 描画データ取得
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # 申請一覧 ----------------------------------------
-    # フォロー情報取得
-    temps = Permit.objects.filter(target_user_id=user_id)
-
-    # 描画オブジェクトの作成
-    permit_list = []
-    for temp in temps:
-        user = User.objects.get(pk=temp.request_user_id)
-        permit = {
-            'id'  : temp.id,
-            'user': user,
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
         }
-        permit_list.append(permit)
-
-    # 被申請一覧 ---------------------------------------
-    # フォロー情報取得
-    temps = Permit.objects.filter(request_user_id=user_id)
-
-    # 描画オブジェクトの作成
-    permited_list = []
-    for temp in temps:
-        user = User.objects.get(pk=temp.target_user_id)
-        permit = {
-            'id'  : temp.id,
-            'user': user,
-        }
-        permited_list.append(permit)
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, 'friend/permit.html', {
-        'user_id'      : user_id,
-        'permit_list'  : permit_list,
-        'permited_list': permited_list,
-    })
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_permit(request, permit_id):
     """
@@ -238,19 +295,19 @@ def run_permit(request, permit_id):
     フレンド／フォロー許可処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース処理
-    # -------------------------------------------------------
-    # 申請許可処理 -------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース処理
+        # -------------------------------------------------------
+        # 申請許可処理 -------------------------------------
         # 申請情報取得
         permit = Permit.objects.get(pk=permit_id)
 
@@ -264,19 +321,23 @@ def run_permit(request, permit_id):
         # 申請情報の削除
         permit.delete()
 
-    except Exception as e:
-        print('err:' + str(e))
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
         # 前のページにリダイレクト
-        user_id = login_user['id']
-        return HttpResponseRedirect(
-            reverse('friend:permit', args=(user_id,))
-        )
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー
     # -------------------------------------------------------
-    # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_nopermit(request, permit_id):
     """
@@ -284,36 +345,37 @@ def run_nopermit(request, permit_id):
     フレンド／フォロー不許可処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース処理
-    # -------------------------------------------------------
-    # 申請許可処理 -------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース処理
+        # -------------------------------------------------------
+        # 申請許可処理 -------------------------------------
         # 申請情報取得
         permit = Permit.objects.get(pk=permit_id)
         permit.delete()
 
-    except Exception as e:
-        print('err:' + str(e))
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
         # 前のページにリダイレクト
-        user_id = login_user['id']
-        return HttpResponseRedirect(
-            reverse('friend:permit', args=(user_id,))
-        )
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    # 前のページにリダイレクト
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-
-
-
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))

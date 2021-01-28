@@ -1,7 +1,4 @@
-def fib(n):
-    a, b = 0, 1
-    while a < n:
-        print(a, end=' ')
-        a, b = b, a+b
-    print(a)
-fib(1000)
+a = [1, 2, 3, 4, 5, 6, 7, 8]
+
+for i in a:
+    print(i * 2)

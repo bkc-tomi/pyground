@@ -32,10 +32,12 @@
                 <td class="ud-td" width="200" height="100">入力</td>
                 <td class="ud-td">{{ question.question_input }}</td>
             </tr>
+            {% comment %} 一時的にコメントアウト
             <tr>
                 <td class="ud-td" width="200" height="100">出力</td>
                 <td class="ud-td">{{ question.question_output }}</td>
-            </tr>
+            </tr> 
+            {% endcomment %}
             <tr>
                 <td class="ud-td" width="200" height="100">コード</td>
                 <td class="ud-td">{{ question.default_code }}</td>
@@ -51,7 +53,7 @@
                     {% for user in correct_users %}
                     <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-bottom uk-margin-left   uk-margin-right">
                         <p>{{ user.username }}</p>
-                        <img class="user-icon" data-src="{{ user_image_icon.url }}" width="100px" height="100px" alt="profile-icon" uk-img>
+                        <img class="user-icon" data-src="{{ user.image_icon.url }}" width="100px" height="100px" alt="profile-icon" uk-img>
                         <a href="{% url 'user:detail' user.id %}" class="uk-button uk-button-primary">詳細</a>
                     </div>
                     {% endfor %}
