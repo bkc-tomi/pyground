@@ -1,8 +1,10 @@
 import logging
+import uuid
 
 from django.shortcuts import render
 from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect, Http404
+from django.core.mail import BadHeaderError, send_mail
 
 # モデル
 from .models           import User, Profile
@@ -53,7 +55,7 @@ def register(request):
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
 
-def register_complete(request):
+def register_complete(request, token):
     """
     ----------------------------------------------------------------------
     ユーザー／登録完了ページ
@@ -61,12 +63,25 @@ def register_complete(request):
     """
     try:
         # -------------------------------------------------------
-        # セッション
+        # ユーザー取得
         # -------------------------------------------------------
-        if 'login_user' not in request.session:
-            return HttpResponseRedirect(reverse('top:top'))
-        
-        login_user = request.session['login_user']
+        user = User.objects.get(token=token)
+
+        # -------------------------------------------------------
+        # セッション登録
+        # -------------------------------------------------------
+        login_user = {
+            'id'      : user.id,
+            'username': user.username,
+        }
+
+        request.session['login_user'] = login_user
+
+        # -------------------------------------------------------
+        # トークン削除
+        # -------------------------------------------------------
+        user.token = ''
+        user.save()
         
         # -------------------------------------------------------
         # ページ遷移
@@ -107,6 +122,8 @@ def run_register(request):
             'password': request.POST['password'],
             'check'   : request.POST['check'],
         }
+        # 本登録用トークン作成 --------------------------
+        token = str(uuid.uuid4())
 
         # -------------------------------------------------------
         # バリデーション
@@ -129,28 +146,47 @@ def run_register(request):
         # -------------------------------------------------------
         # データベース保存
         # -------------------------------------------------------
+
         # DB処理 --------------------------------------
         user = User(
             username = post_dict['username'],
             email    = post_dict['email'],
             password = post_dict['password'],
+            token    = token,
         )
         user.save()
+
 
         # -------------------------------------------------------
         # 後処理
         # -------------------------------------------------------
-        # ユーザーデータ作成 ---------------------------------
-        login_user['id']       = user.id
-        login_user['username'] = user.username
+        # メールの送信 --------------------------------------
+        # メール文章作成
+        """題名"""
+        subject = "仮登録完了"
+        """本文"""
+        message = f"""\
+仮登録が完了しました。以下のリンクにアクセスして本登録をお願いします。
+http://localhost:8000/user/register/complete/{ token }/
+        """
+        """送信元メールアドレス"""
+        from_email = "information@myproject"
+        """宛先メールアドレス"""
+        recipient_list = [
+            "apptest@apptest.com"
+        ]
+
+        # メール送信
+        send_mail(subject, message, from_email, recipient_list)
 
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
-        # セッション保持
-        request.session['login_user'] = login_user
+        # メッセージの追加
+        request.session['message'] = "仮登録が完了しました。"
+
         # ページ遷移
-        return HttpResponseRedirect(reverse('user:register_complete'))
+        return HttpResponseRedirect(reverse('user:register'))
 
     # -------------------------------------------------------
     # エラー処理
@@ -474,7 +510,7 @@ def detail(request, user_id):
             is_me = True
 
         # 申請中の判定 ------------------------------------
-        permit = Permit.objects.filter(target_user_id=user_id)
+        permit = Permit.objects.filter(target_user_id=user_id, request_user_id=login_user['id'])
         if permit:
             is_permit = True
 
@@ -564,10 +600,9 @@ def run_create(request):
 
         # DB処理
         if request.POST['id']:
-            user = User(
-                id=request.POST['id'],
-                image_icon=request.FILES['image_icon'],
-            )
+            user_id = request.POST['id']
+            user = User.objects.get(pk=user_id)
+            user.image_icon = request.FILES['image_icon']
             user.save()
 
         # プロフィール ----------------------------------------
@@ -707,7 +742,6 @@ def run_edit(request, user_id):
         
         # プロフィール ----------------------------------------
         # 情報保管
-        print(request.POST)
         temp_pub = False
         if request.POST['publish'] == 'on':
             temp_pub = True
@@ -756,7 +790,6 @@ def index(request):
         # 描画データ取得
         # -------------------------------------------------------
         user_list = User.objects.all()
-        print(user_list)
 
         # -------------------------------------------------------
         # ページ遷移
