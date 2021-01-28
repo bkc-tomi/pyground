@@ -140,3 +140,15 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# mail
+# SMTPサーバーを使用する場合
+# EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+# コンソールに出力する場合
+EMAIL_BACKEND       = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST          = 'localhost'
+EMAIL_PORT          = 25
+EMAIL_HOST_USER     = 'apptest'
+EMAIL_HOST_PASSWORD = 'xxxxxxxx'
+EMAIL_USE_TLS       = False

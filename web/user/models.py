@@ -3,6 +3,7 @@ import datetime
 from django.db    import models
 from django.utils import timezone
 
+
 """
 --------------------------------------------------------------------------
 テーブル:ユーザーテーブル
@@ -18,6 +19,7 @@ class User(models.Model):
     email      : メールアドレス
     password   : パスワード
     image_icon : ユーザーアイコン
+    token      : 本登録用トークン
     update_at  : 更新日
     ----------------------------------------------------------------------
     """
@@ -30,6 +32,7 @@ class User(models.Model):
         blank=True,
         verbose_name="ユーザーアイコン",
     )
+    token        = models.CharField(max_length=255, blank=True, verbose_name="本登録用トークン")
     udpate_at    = models.DateTimeField(auto_now=True, verbose_name="更新日")
 
     """
