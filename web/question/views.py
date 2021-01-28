@@ -13,26 +13,39 @@ def questions(request):
     問題／一覧ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # 問題の取得 ---------------------------------------
+        question_list = Question.objects.all()
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'question/index.html', {
+            'question_list': question_list,
+        })
 
     # -------------------------------------------------------
-    # 描画データ取得
+    # エラー処理
     # -------------------------------------------------------
-    # 問題の取得 ---------------------------------------
-    question_list = Question.objects.all()
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, 'question/index.html', {
-        'question_list': question_list,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def manage(request, user_id):
     """
@@ -40,30 +53,43 @@ def manage(request, user_id):
     問題／管理ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # フォロー情報取得 ----------------------------------
+        question_list = Question.objects.filter(target_user_id=user_id)
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'question/manage.html', {
+            'user_id'      : user_id,
+            'question_list': question_list,
+        })
 
     # -------------------------------------------------------
-    # 描画データ取得
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # フォロー情報取得 ----------------------------------
-    question_list = Question.objects.filter(target_user_id=user_id)
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, 'question/manage.html', {
-        'user_id'      : user_id,
-        'question_list': question_list,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def detail(request, question_id):
     """
@@ -71,20 +97,20 @@ def detail(request, question_id):
     問題／詳細ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    questions      = {}
-    correct_users = []
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        questions      = {}
+        correct_users = []
         # 質問の取得 -----------------------------------
         question = Question.objects.get(pk=question_id)
 
@@ -111,19 +137,27 @@ def detail(request, question_id):
         if len(bookmark) == 1:
             is_bookmark = True
 
-    except Exception as e:
-        print('err:' + str(e))
-        return HttpResponseRedirect(reverse('question:questions'))
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'question/detail.html', {
+            'user_id'      : user_id,
+            'question'     : question,
+            'correct_users': correct_users,
+            'is_bookmark'  : is_bookmark,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, 'question/detail.html', {
-        'user_id'      : user_id,
-        'question'     : question,
-        'correct_users': correct_users,
-        'is_bookmark'  : is_bookmark,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def create(request):
     """
@@ -131,26 +165,39 @@ def create(request):
     問題／新規作成ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
+    try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 値取得
+        # -------------------------------------------------------
+        # ユーザーID取得 -----------------------------------
+        target_user_id = login_user['id']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'question/create.html', {
+            'target_user_id': target_user_id,
+        })
 
     # -------------------------------------------------------
-    # 値取得
+    # エラー処理
     # -------------------------------------------------------
-    # ユーザーID取得 -----------------------------------
-    target_user_id = login_user['id']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    return render(request, 'question/create.html', {
-        'target_user_id': target_user_id,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_create(request):
     """
@@ -158,18 +205,18 @@ def run_create(request):
     問題／新規作成処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース保存
-    # -------------------------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース保存
+        # -------------------------------------------------------
         question = Question(
             name           =request.POST['name'],
             question_text  =request.POST['question_text'],
@@ -180,21 +227,29 @@ def run_create(request):
         )
         question.save()
 
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        # 問題管理ページへ
+        return HttpResponseRedirect(reverse('question:manage', args=(user_id,)))
+
+    # -------------------------------------------------------
+    # エラー処理
+    # -------------------------------------------------------
     except Exception as e:
-        print('err:' + str(e))
-        return HttpResponseRedirect(reverse('question:create'))
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    # 問題管理ページへ
-    return HttpResponseRedirect(reverse('question:manage', args=(user_id,)))
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def edit(request, question_id):
     """
@@ -202,35 +257,44 @@ def edit(request, question_id):
     問題／編集ページ
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    # ユーザーIDの取得
-    user_id = login_user['id']
-
-    # 問題の取得 --------------------------------------
-    question = {}
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーIDの取得
+        user_id = login_user['id']
+
+        # 問題の取得 --------------------------------------
+        question = {}
         question = Question.objects.get(pk=question_id)
 
-    except Exception as e:
-        raise Http404("Question does not exist")
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'question/edit.html', {
+            'user_id' : user_id,
+            'question': question,
+        })
 
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, 'question/edit.html', {
-        'user_id' : user_id,
-        'question': question,
-    })
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_edit(request, question_id):
     """
@@ -238,19 +302,19 @@ def run_edit(request, question_id):
     問題／編集処理
     ----------------------------------------------------------------------
     """
-    # -------------------------------------------------------
-    # セッション
-    # -------------------------------------------------------
-    if 'login_user' not in request.session:
-        return HttpResponseRedirect(reverse('top:top'))
-    
-    login_user = request.session['login_user']
-
-    # -------------------------------------------------------
-    # データベース保存
-    # -------------------------------------------------------
-    # DB処理 ----------------------------------------
     try:
+        # -------------------------------------------------------
+        # セッション
+        # -------------------------------------------------------
+        if 'login_user' not in request.session:
+            return HttpResponseRedirect(reverse('top:top'))
+        
+        login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # データベース保存
+        # -------------------------------------------------------
+        # DB処理 ----------------------------------------
         question = Question.objects.get(pk=request.POST['question_id'])
         question.name            = request.POST['name']
         question.question_text   = request.POST['question_text']
@@ -258,21 +322,29 @@ def run_edit(request, question_id):
         question.question_output = request.POST['question_output']
         question.default_code    = request.POST['default_code']
         question.save()
+
+        # -------------------------------------------------------
+        # 描画データ取得
+        # -------------------------------------------------------
+        # ユーザーID取得
+        user_id = login_user['id']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        # 問題管理ページへ
+        return HttpResponseRedirect(
+            reverse('question:manage', args=(user_id, ))
+        )
+
+    # -------------------------------------------------------
+    # エラー処理
+    # -------------------------------------------------------
     except Exception as e:
-        print('err:' + str(e))
-        # 前のページにリダイレクト
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-
-    # -------------------------------------------------------
-    # 描画データ取得
-    # -------------------------------------------------------
-    # ユーザーID取得
-    user_id = login_user['id']
-
-    # -------------------------------------------------------
-    # ページ遷移
-    # -------------------------------------------------------
-    # 問題管理ページへ
-    return HttpResponseRedirect(
-        reverse('question:manage', args=(user_id, ))
-    )
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))

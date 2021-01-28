@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'question.apps.QuestionConfig',
     'top.apps.TopConfig',
     'user.apps.UserConfig',
+    'errors.apps.ErrorsConfig',
 ]
 
 MIDDLEWARE = [
