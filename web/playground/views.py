@@ -5,7 +5,7 @@ from django.http      import HttpResponse, HttpResponseRedirect
 # モデル
 from .models         import Code
 from user.models     import User
-from question.models import Question
+from question.models import Question, Correcter
 
 # コード実行関数
 from .code.execute import exec_code
@@ -31,14 +31,14 @@ def index(request):
         # コード ----------------------------------------
         # 初期値
         code_name = ""
-        code = """
-    def fib(n):
-        a, b = 0, 1
-        while a < n:
-            print(a, end=' ')
-            a, b = b, a+b
-        print()
-    fib(1000)"""
+        code = """\
+# フィボナッチ数列
+
+a, b = 0, 1
+while a < 1000:
+    print(a, end=' ')
+    a, b = b, a+b
+"""
         # 変更を更新
         if 'code' in request.session:
             code = request.session['code']
@@ -337,6 +337,17 @@ def run_question(request, question_id):
 答え　　: { answer }
 判定　　: { judge }
         """
+        # -------------------------------------------------------
+        # 正解者登録
+        # -------------------------------------------------------
+        user_id = login_user['id']
+        if judge == '正解':
+            if not Correcter.objects.filter(correct_user_id=user_id).exists():
+                correcter = Correcter(
+                    correct_user_id    = user_id,
+                    target_question_id = question_id,
+                )
+                correcter.save()
 
         # -------------------------------------------------------
         # 描画配列作成

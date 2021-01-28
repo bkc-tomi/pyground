@@ -1,3 +1,4 @@
-def asc_order(num):
+a = [1, 2, 3, 4, 5, 6, 7, 8]
 
-    return asc
+for i in a:
+    print(i * 2)
