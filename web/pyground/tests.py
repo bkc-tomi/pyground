@@ -1,3 +1,5 @@
+import uuid
+
 from django.test import TestCase
 from django.conf import settings
 from importlib   import import_module
@@ -37,10 +39,12 @@ class CommonTestCase(TestCase):
         ユーザーの作成
         -----------------------------------------------
         """
+        token = str(uuid.uuid4())
         return User.objects.create(
             username = username,
             email    = email,
             password = password,
+            token    = token,
         )
 
     def make_question(self, question_number, target_user_id):
@@ -61,7 +65,7 @@ class CommonTestCase(TestCase):
     def make_login_user(self, user_id, username):
         """
         -----------------------------------------------
-        ログインユーザーの作成
+        ログインユーザーセッションの作成
         -----------------------------------------------
         """
         session = self.session
@@ -69,6 +73,16 @@ class CommonTestCase(TestCase):
             'id'      : user_id,
             'username': username,
         }
+        session.save()
+
+    def make_message(self, msg):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['message'] = msg
         session.save()
 
     def make_profile(self, user_id, publish):
