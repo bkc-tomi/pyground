@@ -112,7 +112,7 @@ class CommonTestCase(TestCase):
         フォロー・フォロワーの作成
         -----------------------------------------------
         """
-        return Code.objects.create(
+        return Follow.objects.create(
             follow_user_id   = follow_id,
             followed_user_id = followed_id,
         )
@@ -123,7 +123,7 @@ class CommonTestCase(TestCase):
         申請の作成
         -----------------------------------------------
         """
-        return Code.objects.create(
+        return Permit.objects.create(
             request_user_id = request_id,
             target_user_id  = target_id,
         )

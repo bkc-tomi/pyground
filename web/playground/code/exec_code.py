@@ -1,4 +1,6 @@
-a = [1, 2, 3, 4, 5, 6, 7, 8]
+# フィボナッチ数列
 
-for i in a:
-    print(i * 2)
+a, b = 0, 1
+while a < 1000:
+    print(a, end=' ')
+    a, b = b, a+b
