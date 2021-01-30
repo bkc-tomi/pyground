@@ -8,7 +8,21 @@ def top(request):
     トップ／トップページ
     ----------------------------------------------------------------------
     """
+    try:
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
+        return render(request, 'top/index.html')
+    
     # -------------------------------------------------------
-    # ページ遷移
+    # エラー処理
     # -------------------------------------------------------
-    return render(request, 'top/index.html')
+    except Exception as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+            'msg' : '',
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))

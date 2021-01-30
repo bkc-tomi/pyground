@@ -77,6 +77,7 @@ while a < 1000:
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -127,6 +128,7 @@ def run(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -186,6 +188,7 @@ def edit(request, code_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -238,6 +241,7 @@ def run_edit(request, code_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -296,6 +300,7 @@ def question(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -374,6 +379,7 @@ def run_question(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -419,6 +425,7 @@ def save(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -462,6 +469,7 @@ def update(request, code_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))

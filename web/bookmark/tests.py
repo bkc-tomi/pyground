@@ -287,6 +287,7 @@ class ReleaseViewTest(CommonTestCase):
         """
         # データ作成 ------------------------------------------------
         user = self.make_user('usr', 'aa@bb.jp', '0000')
+        log_u = self.make_login_user(user.id, user.username)
         q = self.make_question(1, user.id)
 
         b = self.make_bookmark(user.id, q.id)

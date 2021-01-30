@@ -4,12 +4,15 @@
 {% block content %}
     <h1 class="uk-margin-top uk-margin-left">エラー</h1>
 
-    <div class="uk-flex uk-flex-wrap uk-flex-center">
-        <p>
-            下記のエラーが発生しました。<br>
+    <div class="uk-flex uk-flex-column uk-flex-center">
+        <p class="uk-width-1-1">
+            下記のエラーが発生しました。
             お手数ですがもう一度お願いします。
         </p>
-        <div>
+        <h3>メッセージ</h3>
+        <p>{{ errors.msg }}</p>
+        <h3>エラー内容</h3>
+        <div class="uk-width-1-1">
             {% if errors %}
                 <p>type   : {{ errors.type }}</p>
                 <p>message: {{ errors.err }}</p>

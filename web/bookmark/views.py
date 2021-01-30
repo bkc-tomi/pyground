@@ -60,6 +60,7 @@ def index(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -114,6 +115,7 @@ def run_bookmark(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -154,6 +156,7 @@ def release(request, bookmark_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))

@@ -43,6 +43,7 @@ def questions(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -87,6 +88,7 @@ def manage(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -155,6 +157,7 @@ def detail(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -195,6 +198,7 @@ def create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -247,6 +251,7 @@ def run_create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -292,6 +297,7 @@ def edit(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -345,6 +351,7 @@ def run_edit(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
