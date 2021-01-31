@@ -183,11 +183,19 @@ def create(request):
         # ユーザーID取得 -----------------------------------
         target_user_id = login_user['id']
 
+        # メッセージの取得 -----------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, 'question/create.html', {
             'target_user_id': target_user_id,
+            'message'       : message,
         })
 
     # -------------------------------------------------------
@@ -217,6 +225,21 @@ def run_create(request):
             return HttpResponseRedirect(reverse('top:top'))
         
         login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        if request.POST['name'] == '':
+            request.session['message'] = '問題名が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_text'] == '':
+            request.session['message'] = '問題文が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_output'] == '':
+            request.session['message'] = '出力値(答え)が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
 
         # -------------------------------------------------------
         # データベース保存
@@ -281,12 +304,20 @@ def edit(request, question_id):
         question = {}
         question = Question.objects.get(pk=question_id)
 
+        # メッセージの取得 ---------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, 'question/edit.html', {
             'user_id' : user_id,
             'question': question,
+            'message' : message,
         })
 
     # -------------------------------------------------------
@@ -316,6 +347,21 @@ def run_edit(request, question_id):
             return HttpResponseRedirect(reverse('top:top'))
         
         login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        if request.POST['name'] == '':
+            request.session['message'] = '問題名が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_text'] == '':
+            request.session['message'] = '問題文が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_output'] == '':
+            request.session['message'] = '出力値(答え)が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
 
         # -------------------------------------------------------
         # データベース保存

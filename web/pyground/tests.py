@@ -124,7 +124,7 @@ class CommonTestCase(TestCase):
         -----------------------------------------------
         """
         return Correcter.objects.create(
-            target_user_id     = user_id,
+            correct_user_id     = user_id,
             target_question_id = question_id,
         )
 
