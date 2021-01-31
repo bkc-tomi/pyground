@@ -698,7 +698,7 @@ def edit(request, user_id):
             disp_profile['profile_text'] = temp2.profile_text
             disp_profile['publish']      = temp2.publish
 
-        # メッセージの取得
+        # メッセージの取得 --------------------------------
         message = ''
         if 'message' in request.session:
             message = request.session['message']
