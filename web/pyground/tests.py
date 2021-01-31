@@ -85,6 +85,26 @@ class CommonTestCase(TestCase):
         session['message'] = msg
         session.save()
 
+    def make_code_session(self, code):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['code'] = code
+        session.save()
+
+    def make_result_session(self, result):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['result'] = result
+        session.save()
+
     def make_profile(self, user_id, publish):
         """
         -----------------------------------------------
