@@ -1,6 +1,44 @@
+td {
+    vertical-align: top;
+}
+
+textarea {
+    background: blue;
+    border: none;
+    outline: none;
+}
+
+.result {
+    border: none;
+}
+
+.line-number {
+    width: 1em;
+    margin-right: 1em;
+    margin-top: 5px;
+    text-align: right;
+    font-family: Menlo, Monaco, 'Courier New', monospace;
+    font-size: large;
+}
+
 /* edit.html */
+#edit-code {
+    tab-size: 4;
+    border: none;
+    border-left: solid 1px gainsboro;
+}
 /* index.html */
+#index-code {
+    tab-size: 4;
+    border: none;
+    border-left: solid 1px gainsboro;
+}
 /* question.html */
+#question-code {
+    tab-size: 4;
+    border: none;
+    border-left: solid 1px gainsboro;
+}
 
 @media screen and (max-width:1000px) {
     

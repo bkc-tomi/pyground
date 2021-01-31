@@ -1,6 +1,6 @@
-# フィボナッチ数列
+def max(a, b):
+    if a > b:
+        return a
+    return b
 
-a, b = 0, 1
-while a < 1000:
-    print(a, end=' ')
-    a, b = b, a+b
+print(max(5, 10))

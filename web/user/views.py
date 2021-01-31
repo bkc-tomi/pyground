@@ -606,7 +606,10 @@ def run_create(request):
         if request.POST['id']:
             user_id = request.POST['id']
             user = User.objects.get(pk=user_id)
-            user.image_icon = request.FILES['image_icon']
+            if 'image_icon' in request.FILES:
+                if request.FILES['image_icon'] != '':
+                    user.image_icon = request.FILES['image_icon']
+            
             user.save()
 
         # プロフィール ----------------------------------------
@@ -695,11 +698,18 @@ def edit(request, user_id):
             disp_profile['profile_text'] = temp2.profile_text
             disp_profile['publish']      = temp2.publish
 
+        # メッセージの取得
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, "user/edit.html", {
             'profile': disp_profile,
+            'message': message,
         })
 
     # -------------------------------------------------------
@@ -730,6 +740,19 @@ def run_edit(request, user_id):
         
         login_user = request.session['login_user']
 
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        # ユーザー名
+        if request.POST['username'] == '':
+            request.session['message'] = 'ユーザー名は必ず入力してください。'
+            return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
+            
+        # パスワード
+        if request.POST['password'] == '':
+            request.session['message'] = 'パスワードは必ず入力してください。'
+            return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
+        
         # -------------------------------------------------------
         # データベース保存
         # -------------------------------------------------------

@@ -545,6 +545,11 @@ class DetailViewTest(CommonTestCase):
         self.assertEqual(response.context['follow_id'], False)
         self.assertEqual(response.context['is_me'], True)
         self.assertEqual(response.context['is_permit'], False)
+        self.assertQuerysetEqual(
+            response.context['codes'],
+            ['<Code: code2>', '<Code: code1>'],
+            ordered=False,
+        )
         
 
     def test_detail_with_no_user(self):
@@ -659,3 +664,382 @@ class DetailViewTest(CommonTestCase):
             status_code=302,
         )
 
+class CreateViewTest(CommonTestCase):
+    """
+    ----------------------------------------------------------------------
+    ユーザー／プロフィール新規作成ページ
+    ----------------------------------------------------------------------
+    """
+    def test_create(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        ログインしているユーザーのIDを取得できているか
+        ** 入力値 **
+        
+        ** 期待値 **
+        
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        lu = self.make_login_user(u.id, u.username)
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:create')
+        response = self.client.get(url)
+
+        # テスト ---------------------------------------------------
+        # レスポンス
+        self.assertEqual(response.status_code, 200)
+        # レスポンス(配列・構造体)
+        self.assertEqual(response.context['target_user_id'], u.id)
+
+    def test_redirect(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザーがログインしてない状態でのリダイレクト
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+
+        # 実行 -----------------------------------------------------
+        response = self.client.get(reverse('user:create'))
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('top:top'),
+            status_code=302,
+        )
+
+class RunCreateViewTest(CommonTestCase):
+    """
+    ----------------------------------------------------------------------
+    ユーザー／プロフィール新規作成処理
+    ----------------------------------------------------------------------
+    """
+    def test_run_create(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - プロフィール情報が作成されているか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        # 初期データ
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        lu = self.make_login_user(u.id, u.username)
+
+        # 更新データ
+        post_data = {
+            'id'     : u.id,
+            'profile': 'ああああ',
+            'publish': 'off',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:run_create')
+        response = self.client.post(url, post_data)
+
+        create_p = Profile.objects.get(target_user_id=u.id)
+
+        # テスト ---------------------------------------------------
+        # レスポンス
+        self.assertRedirects(
+            response,
+            expected_url=reverse('user:detail', args=(u.id,)),
+            status_code=302,
+            target_status_code=200,
+        )
+        # プロフィール情報の更新
+        self.assertEqual(create_p.profile_text, 'ああああ')
+        self.assertEqual(create_p.publish, False)
+
+    def test_redirect(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザーがログインしてない状態でのリダイレクト
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+
+        # 実行 -----------------------------------------------------
+        response = self.client.get(reverse('user:run_create'))
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('top:top'),
+            status_code=302,
+        )
+
+class EditViewTest(CommonTestCase):
+    """
+    ----------------------------------------------------------------------
+    ユーザー／プロフィール編集ページ
+    ----------------------------------------------------------------------
+    """
+    def test_edit(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - 適切なユーザーを取得しているか
+        - 適切なプロフィールを取得しているか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        p = self.make_profile(u.id, True)
+        lu = self.make_login_user(u.id, u.username)
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:edit', args=(u.id, ))
+        response = self.client.get(url)
+
+        disp = response.context['profile']
+        # テスト ---------------------------------------------------
+        # レスポンス
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(disp['id']          , u.id)
+        self.assertEqual(disp['username']    , u.username)
+        self.assertEqual(disp['password']    , u.password)
+        self.assertEqual(disp['profile_text'], p.profile_text)
+        self.assertEqual(disp['publish']     , p.publish)
+
+    def test_with_no_user(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - 指定したユーザーが存在しない時の処理は適切か
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        p = self.make_profile(u.id, True)
+        lu = self.make_login_user(u.id, u.username)
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:edit', args=(u.id + 1, ))
+        response = self.client.get(url)
+        # テスト ---------------------------------------------------
+        # リダイレクト
+        self.assertRedirects(
+            response,
+            expected_url=reverse('errors:errors'),
+            status_code=302,
+            target_status_code=200,
+        )
+
+    def test_redirect(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザーがログインしてない状態でのリダイレクト
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+
+        # 実行 -----------------------------------------------------
+        response = self.client.get(reverse('user:edit', args=(u.id, )))
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('top:top'),
+            status_code=302,
+        )
+
+class RunEditViewTest(CommonTestCase):
+    """
+    ----------------------------------------------------------------------
+    ユーザー／プロフィール編集処理
+    ----------------------------------------------------------------------
+    """
+    def test_run_edit(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザー情報の更新はできているか
+        - プロフィール情報の更新はできているか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        p = self.make_profile(u.id, True)
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'id'      : u.id,
+            'username': 'user',
+            'password': 'yatta',
+            'profile' : 'rrrrr',
+            'publish' : 'on',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:run_edit', args=(u.id, ))
+        response = self.client.post(url, post_data)
+
+        update_u = User.objects.get(pk=u.id)
+        update_p = Profile.objects.get(pk=p.id)
+        # テスト ---------------------------------------------------
+        # 更新データ
+        self.assertEqual(update_u.username, post_data['username'])
+        self.assertEqual(update_u.password, post_data['password'])
+        self.assertEqual(update_p.profile_text , post_data['profile'])
+        self.assertEqual(update_p.publish , True)
+        # リダイレクト
+        self.assertRedirects(
+            response,
+            expected_url=reverse('user:detail', args=(u.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+
+    def test_validate_username(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - username未入力に対する処理は適切か
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        p = self.make_profile(u.id, True)
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'id'      : u.id,
+            'username': '',
+            'password': 'yatta',
+            'profile' : 'rrrrr',
+            'publish' : 'on',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:run_edit', args=(u.id, ))
+        response = self.client.post(url, post_data)
+
+        session = self.client.session['message']
+        # テスト ---------------------------------------------------
+        # 更新データ
+        self.assertEqual(session, 'ユーザー名は必ず入力してください。')
+        # リダイレクト
+        self.assertRedirects(
+            response,
+            expected_url=reverse('user:edit', args=(u.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+
+    def test_validate_password(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - パスワード未入力に対する処理は適切か
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        p = self.make_profile(u.id, True)
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'id'      : u.id,
+            'username': 'aaaa',
+            'password': '',
+            'profile' : 'rrrrr',
+            'publish' : 'on',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:run_edit', args=(u.id, ))
+        response = self.client.post(url, post_data)
+
+        session = self.client.session['message']
+        # テスト ---------------------------------------------------
+        # 更新データ
+        self.assertEqual(session, 'パスワードは必ず入力してください。')
+        # リダイレクト
+        self.assertRedirects(
+            response,
+            expected_url=reverse('user:edit', args=(u.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+
+    def test_redirect(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザーがログインしてない状態でのリダイレクト
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+
+        # 実行 -----------------------------------------------------
+        response = self.client.get(reverse('user:run_edit', args=(u.id, )))
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('top:top'),
+            status_code=302,
+        )
+
+class IndexViewTest(CommonTestCase):
+    """
+    ----------------------------------------------------------------------
+    ユーザー／ユーザー一覧ページ
+    ----------------------------------------------------------------------
+    """
+    def test_index(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザー情報を取得し表示できているか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
+        u2 = self.make_user('u2', 'b@b.jp', '0000')
+
+        lu = self.make_login_user(u1.id, u1.username)
+
+        # 実行 -----------------------------------------------------
+        url = reverse('user:index')
+        response = self.client.get(url)
+
+        # テスト ---------------------------------------------------
+        # レスポンス
+        self.assertEqual(response.status_code, 200)
+        # レスポンス(配列・構造体)
+        self.assertQuerysetEqual(
+            response.context['user_list'],
+            ['<User: u1>', '<User: u2>'],
+            ordered=False,
+        )
+                
+    def test_redirect(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - ユーザーがログインしてない状態でのリダイレクト
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+
+        # 実行 -----------------------------------------------------
+        response = self.client.get(reverse('user:index'))
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('top:top'),
+            status_code=302,
+        )
