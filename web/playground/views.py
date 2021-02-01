@@ -385,9 +385,20 @@ def update(request, code_id):
         # -------------------------------------------------------
         # DB更新 ------------------------------------------
         code = Code.objects.get(pk=code_id)
-        code.name = request.POST['code-name']
-        code.code = request.POST['code']
-        code.save()
+
+        if code.target_user_id == login_user['id']:
+            # 更新処理
+            code.name = request.POST['code-name']
+            code.code = request.POST['code']
+            code.save()
+        else:
+            # 新規作成
+            new_code = Code(
+                name           = request.POST['code-name'],
+                code           = request.POST['code'],
+                target_user_id = login_user['id']
+            )
+            new_code.save()
 
         # -------------------------------------------------------
         # ページ遷移
