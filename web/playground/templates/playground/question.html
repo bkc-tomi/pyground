@@ -44,21 +44,49 @@
                 </tr>
                 <tr>
                     <td>
-                    <textarea 
-                        id="question-code" 
-                        class="uk-textarea uk-width-1-1 code-font" 
-                        name="code" value="" rows="20" style="resize: none;"
-                    >{{ question.default_code }}</textarea>
+                        <div class="uk-flex uk-flex-right uk-card uk-card-default">
+                            <div class="line-number">
+                                <div>1</div>
+                                <div>2</div>
+                                <div>3</div>
+                                <div>4</div>
+                                <div>5</div>
+                                <div>6</div>
+                                <div>7</div>
+                                <div>8</div>
+                                <div>9</div>
+                                <div>10</div>
+                                <div>11</div>
+                                <div>12</div>
+                                <div>13</div>
+                                <div>14</div>
+                                <div>15</div>
+                                <div>16</div>
+                                <div>17</div>
+                                <div>18</div>
+                                <div>19</div>
+                                <div>20</div>
+                            </div>
+                            <div class="uk-width-1-1">
+                                <textarea 
+                                    id="question-code" 
+                                    class="uk-textarea uk-width-1-1 code-font" 
+                                    name="code" value="" rows="20" style="resize: none;"
+                                >{{ question.default_code }}</textarea>
+                            </div>
                     </td>
                     <td>
-                    <textarea 
-                        class="uk-textarea uk-width-1-1 code-font" 
-                        name="result" value="" rows="20" style="resize: none;"
-                    >{{ result }}</textarea>
+                        <div class="uk-flex uk-flex-right uk-card uk-card-default">
+                            <textarea 
+                                class="uk-textarea uk-width-1-1 code-font" 
+                                name="result" value="" rows="20" style="resize: none;"
+                            >{{ result }}</textarea>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
     <script src="{% static 'js/form.js' %}"></script>
+    <script src="{% static 'js/question-code.js' %}"></script>
 {% endblock %}

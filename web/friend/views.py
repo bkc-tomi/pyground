@@ -58,6 +58,7 @@ def follow(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -114,6 +115,7 @@ def follower(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -175,6 +177,7 @@ def run_follow(request, follow_user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -215,6 +218,7 @@ def release(request, follow_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -285,6 +289,7 @@ def permit(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -335,6 +340,7 @@ def run_permit(request, permit_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -376,6 +382,7 @@ def run_nopermit(request, permit_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))

@@ -60,6 +60,7 @@ def index(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -80,6 +81,12 @@ def run_bookmark(request, question_id):
         login_user = request.session['login_user']
 
         # -------------------------------------------------------
+        # 入力値のチェック
+        # -------------------------------------------------------
+        # 存在しないidなら取得できないのでエラーページへ飛ぶ
+        q_count = Question.objects.get(pk=question_id)
+
+        # -------------------------------------------------------
         # データベース操作
         # -------------------------------------------------------
         # 各種ID取得 -------------------------------------
@@ -89,7 +96,7 @@ def run_bookmark(request, question_id):
         # DB登録 ----------------------------------------
         bookmark = Bookmark(
             target_question_id = question_id,
-            target_user_id = user_id,
+            target_user_id     = user_id,
         )
         bookmark.save()
 
@@ -108,6 +115,7 @@ def run_bookmark(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -148,6 +156,7 @@ def release(request, bookmark_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))

@@ -44,7 +44,9 @@ html body {
     font-size: large;
 }
 
-@media screen and (max-width:1000px) {
+
+
+@media screen and (max-width:1200px) {
     .main-contents {
         padding: 0 50px 0 50px;
     }

@@ -1,3 +1,5 @@
+import uuid
+
 from django.test import TestCase
 from django.conf import settings
 from importlib   import import_module
@@ -37,10 +39,12 @@ class CommonTestCase(TestCase):
         ユーザーの作成
         -----------------------------------------------
         """
+        token = str(uuid.uuid4())
         return User.objects.create(
             username = username,
             email    = email,
             password = password,
+            token    = token,
         )
 
     def make_question(self, question_number, target_user_id):
@@ -61,7 +65,7 @@ class CommonTestCase(TestCase):
     def make_login_user(self, user_id, username):
         """
         -----------------------------------------------
-        ログインユーザーの作成
+        ログインユーザーセッションの作成
         -----------------------------------------------
         """
         session = self.session
@@ -69,6 +73,36 @@ class CommonTestCase(TestCase):
             'id'      : user_id,
             'username': username,
         }
+        session.save()
+
+    def make_message(self, msg):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['message'] = msg
+        session.save()
+
+    def make_code_session(self, code):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['code'] = code
+        session.save()
+
+    def make_result_session(self, result):
+        """
+        -----------------------------------------------
+        メッセージセッションの作成
+        -----------------------------------------------
+        """
+        session = self.session
+        session['result'] = result
         session.save()
 
     def make_profile(self, user_id, publish):
@@ -90,7 +124,7 @@ class CommonTestCase(TestCase):
         -----------------------------------------------
         """
         return Correcter.objects.create(
-            target_user_id     = user_id,
+            correct_user_id     = user_id,
             target_question_id = question_id,
         )
 
@@ -112,7 +146,7 @@ class CommonTestCase(TestCase):
         フォロー・フォロワーの作成
         -----------------------------------------------
         """
-        return Code.objects.create(
+        return Follow.objects.create(
             follow_user_id   = follow_id,
             followed_user_id = followed_id,
         )
@@ -123,7 +157,7 @@ class CommonTestCase(TestCase):
         申請の作成
         -----------------------------------------------
         """
-        return Code.objects.create(
+        return Permit.objects.create(
             request_user_id = request_id,
             target_user_id  = target_id,
         )

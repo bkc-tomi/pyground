@@ -10,18 +10,18 @@
         <a class="uk-button uk-button-primary" href="{% url 'user:index' %}">ユーザー一覧へ</a>
 
         {% if is_me %}
-            <a class="uk-button uk-button-primary" href="{% url 'user:edit' profile.id %}">編集する</a>
+            <a class="uk-button uk-button-primary" href="{% url 'user:edit' user.id %}">編集する</a>
         {% else %}
             {% if follow_id %}
             <a class="uk-button uk-button-default" href="{% url 'friend:release' follow_id %}">フォロー解除</a>
             {% else %}
-            <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' profile.id %}">フォローする</a>
+            <a class="uk-button uk-button-primary" href="{% url 'friend:run_follow' user.id %}">フォローする</a>
             {% endif %}
         {% endif %}
     </div>
     <br/>
     <div>
-    <img class="user-icon" data-src="{{ profile.image_icon.url }}" width="200px" height="200px" alt="profile-icon" uk-img>
+    <img class="user-icon" data-src="{{ user.image_icon.url }}" width="200px" height="200px" alt="profile-icon" uk-img>
 
     </div>
     <hr />
@@ -29,11 +29,11 @@
     <tbody>
         <tr>
             <td class="ud-td" width="200" height="40">ユーザネーム</td>
-            <td class="ud-td">{{ profile.username }}</td>
+            <td class="ud-td">{{ user.username }}</td>
         </tr>
         <tr>
             <td class="ud-td" width="200" height="40">メールアドレス</td>
-            <td class="ud-td">{{ profile.email }}</td>
+            <td class="ud-td">{{ user.email }}</td>
         </tr>
         <tr>
             <td class="ud-td" width="200" height="100">プロフィール</td>

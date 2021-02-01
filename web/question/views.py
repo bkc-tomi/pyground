@@ -43,6 +43,7 @@ def questions(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -87,6 +88,7 @@ def manage(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -155,6 +157,7 @@ def detail(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -180,11 +183,19 @@ def create(request):
         # ユーザーID取得 -----------------------------------
         target_user_id = login_user['id']
 
+        # メッセージの取得 -----------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, 'question/create.html', {
             'target_user_id': target_user_id,
+            'message'       : message,
         })
 
     # -------------------------------------------------------
@@ -195,6 +206,7 @@ def create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -213,6 +225,21 @@ def run_create(request):
             return HttpResponseRedirect(reverse('top:top'))
         
         login_user = request.session['login_user']
+
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        if request.POST['name'] == '':
+            request.session['message'] = '問題名が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_text'] == '':
+            request.session['message'] = '問題文が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
+
+        if request.POST['question_output'] == '':
+            request.session['message'] = '出力値(答え)が設定されていません。'
+            return HttpResponseRedirect(reverse('question:create'))
 
         # -------------------------------------------------------
         # データベース保存
@@ -247,6 +274,7 @@ def run_create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -276,12 +304,20 @@ def edit(request, question_id):
         question = {}
         question = Question.objects.get(pk=question_id)
 
+        # メッセージの取得 ---------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, 'question/edit.html', {
             'user_id' : user_id,
             'question': question,
+            'message' : message,
         })
 
     # -------------------------------------------------------
@@ -292,6 +328,7 @@ def edit(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -312,10 +349,25 @@ def run_edit(request, question_id):
         login_user = request.session['login_user']
 
         # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        if request.POST['name'] == '':
+            request.session['message'] = '問題名が設定されていません。'
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
+
+        if request.POST['question_text'] == '':
+            request.session['message'] = '問題文が設定されていません。'
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
+
+        if request.POST['question_output'] == '':
+            request.session['message'] = '出力値(答え)が設定されていません。'
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
+
+        # -------------------------------------------------------
         # データベース保存
         # -------------------------------------------------------
         # DB処理 ----------------------------------------
-        question = Question.objects.get(pk=request.POST['question_id'])
+        question = Question.objects.get(pk=question_id)
         question.name            = request.POST['name']
         question.question_text   = request.POST['question_text']
         question.question_input  = request.POST['question_input']
@@ -345,6 +397,7 @@ def run_edit(request, question_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))

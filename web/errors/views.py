@@ -11,7 +11,12 @@ def errors(request):
     # ---------------------------------------------
     # エラー情報取得
     # ---------------------------------------------
-    errors = {}
+    errors = {
+        'type': '',
+        'args': '',
+        'err' : '',
+        'msg' : '',
+    }
     if 'errors' in request.session:
         errors = request.session['errors']
         del request.session['errors']

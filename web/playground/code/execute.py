@@ -30,9 +30,12 @@ def exec_code(code: str):
     file_name = 'exec_code.py'
     file_path = str(BASE_DIR) + '/code/' + file_name
 
+    # タブ　->　スペース変換
+    enc_code = code.replace('\t', '    ')
+
     # ファイルの作成
     f = open(file_path, 'w')
-    f.write(code)
+    f.write(enc_code)
     f.close()
 
     # ファイルの実行

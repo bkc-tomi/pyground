@@ -51,6 +51,7 @@ def register(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -91,11 +92,22 @@ def register_complete(request, token):
     # -------------------------------------------------------
     # エラー処理
     # -------------------------------------------------------
+    except User.DoesNotExist as e:
+        errors = {
+            'type': str(type(e)),
+            'args': str(e.args),
+            'err' : str(e),
+            'msg' : 'このユーザーはすでに本登録が済んでいます。',
+        }
+        request.session['errors'] = errors
+        return HttpResponseRedirect(reverse('errors:errors'))
+
     except Exception as e:
         errors = {
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -196,6 +208,7 @@ http://localhost:8000/user/register/complete/{ token }/
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -240,6 +253,7 @@ def login(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -279,7 +293,7 @@ def run_login(request):
         # -------------------------------------------------------
         # データ取得 ------------------------------------
         user_list = User.objects.filter(
-            email = post_dict['email'],
+            email    = post_dict['email'],
             password = post_dict['password']
         )
         
@@ -321,6 +335,7 @@ def run_login(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -359,6 +374,7 @@ def run_logout(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -391,6 +407,7 @@ def withdrawal(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -411,14 +428,18 @@ def run_withdrawal(request):
         login_user = request.session['login_user']
 
         # -------------------------------------------------------
-        # ページ遷移
+        # 退会処理
         # -------------------------------------------------------
-        # 退会処理 ----------------------------------------
         # ユーザーをDBから削除
         user = User.objects.get(pk=login_user['id'])
         user.delete()
+
         # ユーザーをセッションから削除
         del request.session['login_user']
+
+        # -------------------------------------------------------
+        # ページ遷移
+        # -------------------------------------------------------
         return HttpResponseRedirect(reverse('top:top'))
     
     # -------------------------------------------------------
@@ -429,6 +450,7 @@ def run_withdrawal(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -452,15 +474,6 @@ def detail(request, user_id):
         # 初期値・値取得
         # -------------------------------------------------------
         # 初期値 ---------------------------------------
-        profile = {
-            'id'          : '',
-            'image_icon'  : {},
-            'username'    : '',
-            'email'       : '',
-            'password'    : '',
-            'profile_text': '',
-            'publish'     : '',
-        }
         follow_num   = 0
         follower_num = 0
         follow_id    = False
@@ -472,22 +485,10 @@ def detail(request, user_id):
         # 描画データ取得
         # -------------------------------------------------------
         # ユーザーの取得 ----------------------------------
-        temp = ''
-        temp = User.objects.get(pk=user_id)
-
-        profile['id']         = temp.id
-        profile['username']   = temp.username
-        profile['email']      = temp.email
-        profile['image_icon'] = temp.image_icon
+        user = User.objects.get(pk=user_id)
 
         # プロフィールの取得 --------------------------------
-        temp = ''
-        temp = Profile.objects.filter(target_user_id=user_id)[0:1]
-
-        if len(temp) > 0:
-            temp2 = temp[0]
-            profile['profile_text'] = temp2.profile_text
-            profile['publish']      = temp2.publish
+        profile = Profile.objects.get(target_user_id=user_id)
 
         # コードの取得 ------------------------------------
         codes = Code.objects.filter(target_user_id=user_id)
@@ -506,7 +507,7 @@ def detail(request, user_id):
             follow_id = temp[0].id
 
         # ログインユーザーの判定 ----------------------------
-        if profile['id'] == login_user['id']:
+        if user.id == login_user['id']:
             is_me = True
 
         # 申請中の判定 ------------------------------------
@@ -518,6 +519,7 @@ def detail(request, user_id):
         # ページ遷移
         # -------------------------------------------------------
         return render(request, "user/detail.html", {
+            'user'        : user,
             'profile'     : profile,
             'codes'       : codes,
             'follow_num'  : follow_num,
@@ -526,7 +528,7 @@ def detail(request, user_id):
             'is_me'       : is_me,
             'is_permit'   : is_permit,
         })
-
+    
     # -------------------------------------------------------
     # エラー処理
     # -------------------------------------------------------
@@ -535,6 +537,7 @@ def detail(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -575,6 +578,7 @@ def create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -602,7 +606,10 @@ def run_create(request):
         if request.POST['id']:
             user_id = request.POST['id']
             user = User.objects.get(pk=user_id)
-            user.image_icon = request.FILES['image_icon']
+            if 'image_icon' in request.FILES:
+                if request.FILES['image_icon'] != '':
+                    user.image_icon = request.FILES['image_icon']
+            
             user.save()
 
         # プロフィール ----------------------------------------
@@ -638,6 +645,7 @@ def run_create(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -690,11 +698,18 @@ def edit(request, user_id):
             disp_profile['profile_text'] = temp2.profile_text
             disp_profile['publish']      = temp2.publish
 
+        # メッセージの取得 --------------------------------
+        message = ''
+        if 'message' in request.session:
+            message = request.session['message']
+            del request.session['message']
+
         # -------------------------------------------------------
         # ページ遷移
         # -------------------------------------------------------
         return render(request, "user/edit.html", {
             'profile': disp_profile,
+            'message': message,
         })
 
     # -------------------------------------------------------
@@ -705,6 +720,7 @@ def edit(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -724,6 +740,19 @@ def run_edit(request, user_id):
         
         login_user = request.session['login_user']
 
+        # -------------------------------------------------------
+        # バリデーション
+        # -------------------------------------------------------
+        # ユーザー名
+        if request.POST['username'] == '':
+            request.session['message'] = 'ユーザー名は必ず入力してください。'
+            return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
+            
+        # パスワード
+        if request.POST['password'] == '':
+            request.session['message'] = 'パスワードは必ず入力してください。'
+            return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
+        
         # -------------------------------------------------------
         # データベース保存
         # -------------------------------------------------------
@@ -767,6 +796,7 @@ def run_edit(request, user_id):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
@@ -806,6 +836,7 @@ def index(request):
             'type': str(type(e)),
             'args': str(e.args),
             'err' : str(e),
+            'msg' : '',
         }
         request.session['errors'] = errors
         return HttpResponseRedirect(reverse('errors:errors'))
