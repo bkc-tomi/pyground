@@ -824,6 +824,10 @@ class EditViewTest(CommonTestCase):
         # 実行 -----------------------------------------------------
         url = reverse('user:edit', args=(u.id + 1, ))
         response = self.client.get(url)
+
+        ses = ''
+        if 'errors' in self.client.session:
+            ses = 'error'
         # テスト ---------------------------------------------------
         # リダイレクト
         self.assertRedirects(
@@ -832,6 +836,7 @@ class EditViewTest(CommonTestCase):
             status_code=302,
             target_status_code=200,
         )
+        self.assertEqual(ses, 'error')
 
     def test_redirect(self):
         """

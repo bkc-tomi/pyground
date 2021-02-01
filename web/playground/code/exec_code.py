@@ -1,4 +1,12 @@
-a = 10
-b = 5
-print(a + b)
-            
+def max(a, b):
+    if a > b:
+        return a
+    return b
+
+print(max(5, 10))
+
+
+
+
+
+

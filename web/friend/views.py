@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect
 
+# 共通関数
+from common.func import CommonFuncSet
+
 # モデル
 from .models     import Follow, Permit
 from user.models import User, Profile
@@ -54,13 +57,7 @@ def follow(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def follower(request, user_id):
@@ -111,13 +108,7 @@ def follower(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_follow(request, follow_user_id):
@@ -173,13 +164,7 @@ def run_follow(request, follow_user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def release(request, follow_id):
@@ -214,13 +199,7 @@ def release(request, follow_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def permit(request, user_id):
@@ -285,13 +264,7 @@ def permit(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_permit(request, permit_id):
@@ -336,13 +309,7 @@ def run_permit(request, permit_id):
     # エラー
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_nopermit(request, permit_id):
@@ -378,11 +345,5 @@ def run_nopermit(request, permit_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))

@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect
 
+# 共通関数
+from common.func import CommonFuncSet
+
 # モデル
 from .models         import Code
 from user.models     import User
@@ -40,11 +43,7 @@ while a < 1000:
     a, b = b, a+b
 """
         # 変更を更新
-        if 'code' in request.session:
-            code = request.session['code']
-        
-            # セッションデータの破棄
-            del request.session['code']
+        code = CommonFuncSet.get_from_session(request, 'code')
 
         # 実行結果 --------------------------------------
         # 初期値
@@ -54,11 +53,7 @@ while a < 1000:
 """
 
         # 変更を更新
-        if 'result' in request.session:
-            result = request.session['result']
-
-            # セッションデータの破棄
-            del request.session['result']
+        result = CommonFuncSet.get_from_session(request, 'result')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -73,13 +68,7 @@ while a < 1000:
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run(request):
@@ -112,8 +101,8 @@ def run(request):
         # 描画配列作成
         # -------------------------------------------------------
         # セッションに結果を格納
-        request.session['result'] = result
-        request.session['code']   = code
+        CommonFuncSet.set_to_session(request, 'code', code)
+        CommonFuncSet.set_to_session(request, 'result', result)
 
         # -------------------------------------------------------
         # ページ遷移
@@ -124,13 +113,7 @@ def run(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def edit(request, code_id):
@@ -155,22 +138,13 @@ def edit(request, code_id):
         code = Code.objects.get(pk=code_id)
 
         # 変更を更新
-        if 'code' in request.session:
-            code.code = request.session['code']
-        
-            # セッションデータの破棄
-            del request.session['code']
+        temp = CommonFuncSet.get_from_session(request, 'code')
+        if temp != '':
+            code.code = temp
 
         # 実行結果 --------------------------------------
         # 初期値
-        result = ''
-
-        # 変更を更新
-        if 'result' in request.session:
-            result = request.session['result']
-
-            # セッションデータの破棄
-            del request.session['result']
+        result = CommonFuncSet.get_from_session(request, 'result')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -184,13 +158,7 @@ def edit(request, code_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_edit(request, code_id):
@@ -223,8 +191,8 @@ def run_edit(request, code_id):
         # 描画配列作成
         # -------------------------------------------------------
         # セッションに結果を格納
-        request.session['result'] = result
-        request.session['code']   = code
+        CommonFuncSet.set_to_session(request, 'code', code)
+        CommonFuncSet.set_to_session(request, 'result', result)
 
         # -------------------------------------------------------
         # ページ遷移
@@ -237,13 +205,7 @@ def run_edit(request, code_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def question(request, question_id):
@@ -267,22 +229,13 @@ def question(request, question_id):
         question = Question.objects.get(pk=question_id)
         
         # 変更を更新
-        if 'code' in request.session:
-            question.default_code = request.session['code']
-        
-            # セッションデータの破棄
-            del request.session['code']
+        temp = CommonFuncSet.get_from_session(request, 'code')
+        if temp != '':
+            question.default_code = temp
 
         # 実行結果 --------------------------------------
-        # 初期値
-        result = ''
-
         # 変更を更新
-        if 'result' in request.session:
-            result = request.session['result']
-
-            # セッションデータの破棄
-            del request.session['result']
+        result = CommonFuncSet.get_from_session(request, 'result')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -296,13 +249,7 @@ def question(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_question(request, question_id):
@@ -361,8 +308,8 @@ def run_question(request, question_id):
         # 描画配列作成
         # -------------------------------------------------------
         # セッションに結果を格納
-        request.session['result'] = result
-        request.session['code']   = code
+        CommonFuncSet.set_to_session(request, 'code', code)
+        CommonFuncSet.set_to_session(request, 'result', result)
 
         # -------------------------------------------------------
         # ページ遷移
@@ -375,13 +322,7 @@ def run_question(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def save(request):
@@ -421,13 +362,7 @@ def save(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def update(request, code_id):
@@ -465,11 +400,5 @@ def update(request, code_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))

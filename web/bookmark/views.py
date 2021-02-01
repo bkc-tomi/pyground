@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect
 
+# 共通関数
+from common.func import CommonFuncSet
+
 # モデル
 from .models         import Bookmark
 from question.models import Question
@@ -56,13 +59,7 @@ def index(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_bookmark(request, question_id):
@@ -111,13 +108,7 @@ def run_bookmark(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def release(request, bookmark_id):
@@ -152,11 +143,5 @@ def release(request, bookmark_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))

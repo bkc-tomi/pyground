@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect
 
+# 共通関数
+from common.func import CommonFuncSet
+
 # モデル
 from .models         import Question, Correcter
 from user.models     import User, Profile
@@ -39,13 +42,7 @@ def questions(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def manage(request, user_id):
@@ -84,13 +81,7 @@ def manage(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def detail(request, question_id):
@@ -153,13 +144,7 @@ def detail(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def create(request):
@@ -184,11 +169,7 @@ def create(request):
         target_user_id = login_user['id']
 
         # メッセージの取得 -----------------------------------
-        message = ''
-        if 'message' in request.session:
-            message = request.session['message']
-
-            del request.session['message']
+        message = CommonFuncSet.get_from_session(request, 'message')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -202,13 +183,7 @@ def create(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_create(request):
@@ -230,15 +205,27 @@ def run_create(request):
         # バリデーション
         # -------------------------------------------------------
         if request.POST['name'] == '':
-            request.session['message'] = '問題名が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '問題名が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:create'))
 
         if request.POST['question_text'] == '':
-            request.session['message'] = '問題文が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '問題文が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:create'))
 
         if request.POST['question_output'] == '':
-            request.session['message'] = '出力値(答え)が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '出力値(答え)が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:create'))
 
         # -------------------------------------------------------
@@ -270,13 +257,7 @@ def run_create(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def edit(request, question_id):
@@ -305,11 +286,7 @@ def edit(request, question_id):
         question = Question.objects.get(pk=question_id)
 
         # メッセージの取得 ---------------------------------
-        message = ''
-        if 'message' in request.session:
-            message = request.session['message']
-
-            del request.session['message']
+        message = CommonFuncSet.get_from_session(request, 'message')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -324,13 +301,7 @@ def edit(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_edit(request, question_id):
@@ -352,15 +323,27 @@ def run_edit(request, question_id):
         # バリデーション
         # -------------------------------------------------------
         if request.POST['name'] == '':
-            request.session['message'] = '問題名が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '問題名が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         if request.POST['question_text'] == '':
-            request.session['message'] = '問題文が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '問題文が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         if request.POST['question_output'] == '':
-            request.session['message'] = '出力値(答え)が設定されていません。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                '出力値(答え)が設定されていません。',
+            )
             return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         # -------------------------------------------------------
@@ -393,11 +376,5 @@ def run_edit(request, question_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
