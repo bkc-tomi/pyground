@@ -353,21 +353,21 @@ def run_edit(request, question_id):
         # -------------------------------------------------------
         if request.POST['name'] == '':
             request.session['message'] = '問題名が設定されていません。'
-            return HttpResponseRedirect(reverse('question:create'))
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         if request.POST['question_text'] == '':
             request.session['message'] = '問題文が設定されていません。'
-            return HttpResponseRedirect(reverse('question:create'))
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         if request.POST['question_output'] == '':
             request.session['message'] = '出力値(答え)が設定されていません。'
-            return HttpResponseRedirect(reverse('question:create'))
+            return HttpResponseRedirect(reverse('question:edit', args=(question_id, )))
 
         # -------------------------------------------------------
         # データベース保存
         # -------------------------------------------------------
         # DB処理 ----------------------------------------
-        question = Question.objects.get(pk=request.POST['question_id'])
+        question = Question.objects.get(pk=question_id)
         question.name            = request.POST['name']
         question.question_text   = request.POST['question_text']
         question.question_input  = request.POST['question_input']

@@ -158,7 +158,7 @@ class DetailViewTest(CommonTestCase):
         lu = self.make_login_user(u1.id, u1.username)
 
         # 実行 -----------------------------------------------------
-        url = reverse('question:detail', args=(u1.id, ))
+        url = reverse('question:detail', args=(q.id, ))
         response = self.client.get(url)
 
         # テスト ---------------------------------------------------
@@ -223,7 +223,7 @@ class CreateViewTest(CommonTestCase):
             target_status_code=200,
         )
 
-# ここから未実装
+
 class RunCreateViewTest(CommonTestCase):
     """
     ----------------------------------------------------------------------
@@ -234,11 +234,7 @@ class RunCreateViewTest(CommonTestCase):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        問題の作成ができるか
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 問題の作成ができるか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
@@ -262,43 +258,125 @@ class RunCreateViewTest(CommonTestCase):
 
         # テスト ---------------------------------------------------
         # レスポンス
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:manage', args=(u1.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
         self.assertEqual(create_q.name, post_data['name'])
 
     def test_validate_name(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        入力内容のバリデーションチェック(name)
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 入力内容のバリデーションチェック(name)
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
 
+        lu = self.make_login_user(u1.id, u1.username)
+
+        post_data = {
+            'name'           : '',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+            'target_user_id' : u1.id,
+        }
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_create')
+        response = self.client.post(url, post_data)
+
+        ses_name = ''
+        if 'message' in self.client.session:
+            ses_name = self.client.session['message']
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:create'),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses_name, '問題名が設定されていません。')
 
 
     def test_validate_text(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        入力内容のバリデーションチェック(text)
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 入力内容のバリデーションチェック(question_text)
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
 
+        lu = self.make_login_user(u1.id, u1.username)
+
+        post_data = {
+            'name'           : 'q1',
+            'question_text'  : '',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+            'target_user_id' : u1.id,
+        }
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_create')
+        response = self.client.post(url, post_data)
+
+        ses_name = ''
+        if 'message' in self.client.session:
+            ses_name = self.client.session['message']
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:create'),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses_name, '問題文が設定されていません。')
+
+    def test_validate_output(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - 入力内容のバリデーションチェック(question_output)
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
+
+        lu = self.make_login_user(u1.id, u1.username)
+
+        post_data = {
+            'name'           : 'q1',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': '',
+            'default_code'   : 'aaaa',
+            'target_user_id' : u1.id,
+        }
+        # 実行 -----------------------------------------------------
+        url = reverse('question:run_create')
+        response = self.client.post(url, post_data)
+
+        ses_name = ''
+        if 'message' in self.client.session:
+            ses_name = self.client.session['message']
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:create'),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses_name, '出力値(答え)が設定されていません。')
 
 
     def test_redirect(self):
@@ -331,35 +409,54 @@ class EditViewTest(CommonTestCase):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        編集ページに必要な情報を表示できるか
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 問題をDBから取得できているか
+        - セッションからメッセージを取得できているか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u1.id)
+
+        lu = self.make_login_user(u1.id, u1.username)
+
+        ses = self.make_message('aaaa')
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:edit', args=(q.id, ))
+        response = self.client.get(url)
 
         # テスト ---------------------------------------------------
-
+        # レスポンス
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['message'], 'aaaa')
+        self.assertEqual(response.context['question'], q)
+        
     def test_edit_with_no_question(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        該当する問題情報がない時に適切な処理ができるか
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 該当する問題情報がない時に適切な処理ができるか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u1 = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u1.id)
+
+        lu = self.make_login_user(u1.id, u1.username)
+
+        ses = self.make_message('aaaa')
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:edit', args=(0, ))
+        response = self.client.get(url)
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('errors:errors'),
+            status_code=302,
+            target_status_code=200,
+        )
 
 
     def test_redirect(self):
@@ -395,72 +492,199 @@ class RunEditViewTest(CommonTestCase):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        問題の編集が登録できるか
-        ** 入力値 **
-        
-        ** 期待値 **
+        - POSTデータを取得して変更できるか
         
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u.id)
+
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'question_id'    : q.id,
+            'name'           : 'aaaa',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+        }
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_edit', args=(q.id, ))
+        response = self.client.post(url, post_data)
+
+        update_q = Question.objects.get(pk=q.id)
 
         # テスト ---------------------------------------------------
-
+        self.assertEqual(update_q.name           , 'aaaa')
+        self.assertEqual(update_q.question_text  , 'aaaa')
+        self.assertEqual(update_q.question_input , 'aaaa')
+        self.assertEqual(update_q.question_output, 'aaaa')
+        self.assertEqual(update_q.default_code   , 'aaaa')
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:manage', args=(u.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
 
     def test_run_edit_with_no_question_id(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        該当のquestion_idがない時に適切な処理ができるか
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - question_idに該当する問題が存在しない時エラーページに飛ぶか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u.id)
+
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'question_id'    : q.id,
+            'name'           : 'aaaa',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+        }
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_edit', args=(0, ))
+        response = self.client.post(url, post_data)
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('errors:errors'),
+            status_code=302,
+            target_status_code=200,
+        )
 
 
     def test_validate_name(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        入力情報のバリデーション(name)
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 入力情報のバリデーション(name)
+        - セッションにメッセージは格納されているか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u.id)
+
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'question_id'    : q.id,
+            'name'           : '',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+        }
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_edit', args=(q.id, ))
+        response = self.client.post(url, post_data)
+
+        ses = ''
+        if 'message' in self.client.session:
+            ses = self.client.session['message']
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:edit', args=(q.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses, '問題名が設定されていません。')
 
 
     def test_validate_question_text(self):
         """
         ----------------------------------------------------------------
         ** テスト内容 **
-        入力情報のバリデーション(text)
-        ** 入力値 **
-        
-        ** 期待値 **
-        
+        - 入力情報のバリデーション(question_text)
+        - セッションにメッセージは格納されているか
         ----------------------------------------------------------------
         """
         # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u.id)
+
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'question_id'    : q.id,
+            'name'           : 'aaaa',
+            'question_text'  : '',
+            'question_input' : 'aaaa',
+            'question_output': 'aaaa',
+            'default_code'   : 'aaaa',
+        }
 
         # 実行 -----------------------------------------------------
+        url = reverse('question:run_edit', args=(q.id, ))
+        response = self.client.post(url, post_data)
+
+        ses = ''
+        if 'message' in self.client.session:
+            ses = self.client.session['message']
 
         # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:edit', args=(q.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses, '問題文が設定されていません。')
+
+    def test_validate_question_output(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - 入力情報のバリデーション(question_output)
+        - セッションにメッセージは格納されているか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        q = self.make_question(1, u.id)
+
+        lu = self.make_login_user(u.id, u.username)
+
+        post_data = {
+            'question_id'    : q.id,
+            'name'           : 'aaaa',
+            'question_text'  : 'aaaa',
+            'question_input' : 'aaaa',
+            'question_output': '',
+            'default_code'   : 'aaaa',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('question:run_edit', args=(q.id, ))
+        response = self.client.post(url, post_data)
+
+        ses = ''
+        if 'message' in self.client.session:
+            ses = self.client.session['message']
+
+        # テスト ---------------------------------------------------
+        self.assertRedirects(
+            response,
+            expected_url=reverse('question:edit', args=(q.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertEqual(ses, '出力値(答え)が設定されていません。')
 
 
     def test_redirect(self):
