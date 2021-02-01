@@ -615,6 +615,41 @@ class UpdateViewTest(CommonTestCase):
             target_status_code=200,
         )
 
+    def test_update_other(self):
+        """
+        ----------------------------------------------------------------
+        ** テスト内容 **
+        - 作成者と別のユーザーがコードを変更した場合、新規作成されるか
+        ----------------------------------------------------------------
+        """
+        # データ作成 ------------------------------------------------
+        u = self.make_user('u1', 'a@b.jp', '0000')
+        other_u = self.make_user('u2', 'b@b.jp', '0000')
+        c = self.make_code(u.id, 'code')
+        lu = self.make_login_user(other_u.id, other_u.username)
+
+        post_data = {
+            'code-name': 'code1',
+            'code'     : 'print(10)',
+        }
+
+        # 実行 -----------------------------------------------------
+        url = reverse('playground:update', args=(c.id, ))
+        response = self.client.post(url, post_data)
+
+        c_edit = Code.objects.get(target_user_id=other_u.id)
+
+        # テスト ---------------------------------------------------
+        self.assertEqual(c_edit.name, 'code1')
+        self.assertEqual(c_edit.code, 'print(10)')
+        # リダイレクト
+        self.assertRedirects(
+            response,
+            expected_url=reverse('playground:edit', args=(c.id, )),
+            status_code=302,
+            target_status_code=200,
+        )
+
     def test_redirect(self):
         """
         ----------------------------------------------------------------
