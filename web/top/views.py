@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
+# 共通関数
+from common.func import CommonFuncSet
 
 def top(request):
     """
@@ -18,11 +20,5 @@ def top(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))

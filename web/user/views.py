@@ -6,6 +6,9 @@ from django.urls      import reverse
 from django.http      import HttpResponse, HttpResponseRedirect, Http404
 from django.core.mail import BadHeaderError, send_mail
 
+# 共通関数
+from common.func import CommonFuncSet
+
 # モデル
 from .models           import User, Profile
 from playground.models import Code
@@ -31,10 +34,7 @@ def register(request):
         # -------------------------------------------------------
         # 描画データ作成
         # -------------------------------------------------------
-        message = ''
-        if 'message' in request.session:
-            message = request.session['message']
-            del request.session['message']
+        message = CommonFuncSet.get_from_session(request, 'message')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -47,13 +47,7 @@ def register(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def register_complete(request, token):
@@ -75,8 +69,7 @@ def register_complete(request, token):
             'id'      : user.id,
             'username': user.username,
         }
-
-        request.session['login_user'] = login_user
+        CommonFuncSet.set_to_session(request, 'login_user', login_user)
 
         # -------------------------------------------------------
         # トークン削除
@@ -93,23 +86,11 @@ def register_complete(request, token):
     # エラー処理
     # -------------------------------------------------------
     except User.DoesNotExist as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : 'このユーザーはすでに本登録が済んでいます。',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, 'このユーザーはすでに本登録が済んでいます。')
         return HttpResponseRedirect(reverse('errors:errors'))
 
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_register(request):
@@ -195,7 +176,7 @@ http://localhost:8000/user/register/complete/{ token }/
         # ページ遷移
         # -------------------------------------------------------
         # メッセージの追加
-        request.session['message'] = "仮登録が完了しました。"
+        CommonFuncSet.set_to_session(request, 'message', '仮登録が完了しました。')
 
         # ページ遷移
         return HttpResponseRedirect(reverse('user:register'))
@@ -204,13 +185,7 @@ http://localhost:8000/user/register/complete/{ token }/
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def login(request):
@@ -233,10 +208,7 @@ def login(request):
         # -------------------------------------------------------
         # 描画データ作成
         # -------------------------------------------------------
-        message = ''
-        if 'message' in request.session:
-            message = request.session['message']
-            del request.session['message']
+        message = CommonFuncSet.get_from_session(request, 'message')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -249,13 +221,7 @@ def login(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_login(request):
@@ -297,7 +263,6 @@ def run_login(request):
             password = post_dict['password']
         )
         
-
         # -------------------------------------------------------
         # 後処理
         # -------------------------------------------------------
@@ -312,13 +277,18 @@ def run_login(request):
         # -------------------------------------------------------
         if login_user:
             # ログイン成功 --------------------------------
-            request.session['login_user'] = login_user
+            CommonFuncSet.set_to_session(request, 'login_user', login_user)
             return HttpResponseRedirect(
                 reverse('user:detail', args=(login_user['id'],))
             )
+
         else:
             # ログイン失敗 --------------------------------
-            request.session['message'] = 'ログインに失敗しました。メールアドレス・パスワードをお確かめください。'
+            CommonFuncSet.set_to_session(
+                request, 
+                'message', 
+                'ログインに失敗しました。メールアドレス・パスワードをお確かめください。',
+            )
             return HttpResponseRedirect(reverse('user:login'))
 
     # -------------------------------------------------------
@@ -326,18 +296,16 @@ def run_login(request):
     # -------------------------------------------------------
     # 該当ユーザーが見つからない時
     except User.DoesNotExist:
-        request.session['message'] = 'ログインに失敗しました。メールアドレス・パスワードをお確かめください。'
+        CommonFuncSet.set_to_session(
+            request,
+            'message',
+            'ログインに失敗しました。メールアドレス・パスワードをお確かめください。',
+        )
         return HttpResponseRedirect(reverse('user:login'))
     
     # その他エラー
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
     
 def run_logout(request, user_id):
@@ -370,13 +338,7 @@ def run_logout(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def withdrawal(request):
@@ -403,13 +365,7 @@ def withdrawal(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_withdrawal(request):
@@ -446,13 +402,7 @@ def run_withdrawal(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def detail(request, user_id):
@@ -533,13 +483,7 @@ def detail(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def create(request):
@@ -574,13 +518,7 @@ def create(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_create(request):
@@ -641,13 +579,7 @@ def run_create(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def edit(request, user_id):
@@ -699,10 +631,7 @@ def edit(request, user_id):
             disp_profile['publish']      = temp2.publish
 
         # メッセージの取得 --------------------------------
-        message = ''
-        if 'message' in request.session:
-            message = request.session['message']
-            del request.session['message']
+        message = CommonFuncSet.get_from_session(request, 'message')
 
         # -------------------------------------------------------
         # ページ遷移
@@ -716,13 +645,7 @@ def edit(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def run_edit(request, user_id):
@@ -745,12 +668,20 @@ def run_edit(request, user_id):
         # -------------------------------------------------------
         # ユーザー名
         if request.POST['username'] == '':
-            request.session['message'] = 'ユーザー名は必ず入力してください。'
+            CommonFuncSet.set_to_session(
+                request, 
+                'message',
+                'ユーザー名は必ず入力してください。',
+            )
             return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
             
         # パスワード
         if request.POST['password'] == '':
-            request.session['message'] = 'パスワードは必ず入力してください。'
+            CommonFuncSet.set_to_session(
+                request,
+                'message',
+                'パスワードは必ず入力してください。',
+            )
             return HttpResponseRedirect(reverse('user:edit', args=(login_user['id'], )))
         
         # -------------------------------------------------------
@@ -792,13 +723,7 @@ def run_edit(request, user_id):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
 
 def index(request):
@@ -832,11 +757,5 @@ def index(request):
     # エラー処理
     # -------------------------------------------------------
     except Exception as e:
-        errors = {
-            'type': str(type(e)),
-            'args': str(e.args),
-            'err' : str(e),
-            'msg' : '',
-        }
-        request.session['errors'] = errors
+        CommonFuncSet.set_error_to_session(request, e, '')
         return HttpResponseRedirect(reverse('errors:errors'))
